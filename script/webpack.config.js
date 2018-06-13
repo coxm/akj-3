@@ -18,6 +18,9 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 process.traceDeprecation = true;
 
 
+const title = 'Phaser3 ES6 Game';
+
+
 const entry = [
   'babel-polyfill',
   path.resolve(REPO_ROOT, 'src/index.js'),
@@ -77,6 +80,7 @@ module.exports = {
       __DEV__: JSON.stringify(!IS_PROD),
       __PROD__: JSON.stringify(IS_PROD),
       __BUILD__: JSON.stringify(process.env.NODE_ENV),
+      __TITLE__: JSON.stringify(title),
       'process.env': JSON.stringify({
         // Including this supposedly reduces the size of node modules.
         NODE_ENV: process.env.NODE_ENV,
@@ -85,7 +89,7 @@ module.exports = {
     new OptimizeCssAssetsPlugin({
     }),
     new HtmlWebPackPlugin({
-      title: 'Phaser3 ES6 Game',
+      title,
       template: "./src/ejs/index.ejs",
       filename: "./index.html",
       isProd: IS_PROD,
