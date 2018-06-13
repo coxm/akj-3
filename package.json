@@ -1,0 +1,40 @@
+{
+  "name": "es6-phaser3-basecode",
+  "version": "0.0.0",
+  "description": "Game jam basecode using Phaser3, ES6 (Babel) and Webpack",
+  "main": "build/dist/index.js",
+  "scripts": {
+    "start": "NODE_ENV=development node ./script/start.js",
+    "build": "NODE_ENV=production node ./script/build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/coxm/es6-phaser3-basecode.git"
+  },
+  "author": [
+    "coxm",
+    "nkholski"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coxm/es6-phaser3-basecode/issues"
+  },
+  "homepage": "https://github.com/coxm/es6-phaser3-basecode#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
+    "css-loader": "^0.28.11",
+    "ejs-loader": "^0.3.1",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.2",
+    "phaser": "3",
+    "resolve-url-loader": "^2.3.0",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.12.0",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

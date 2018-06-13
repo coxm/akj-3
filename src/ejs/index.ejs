@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" encoding="UTF-8">
+  <head>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Include Phaser from a CDN if running in production. -->
+    <% if (htmlWebpackPlugin.options.isProd) { %>
+      <script src="unpkg.com/phaser@3.9.0/dist/phaser.min.js"></script>
+    <% } %>
+  </body>
+</html>
