@@ -1,4 +1,4 @@
-import {Game} from 'phaser';
+import {Game, WEBGL} from 'phaser';
 
 import './css/index.css';
 
@@ -13,11 +13,13 @@ const levels = __LEVELS__.map(key => new Level({key}));
 
 
 const game = new Game({
+  type: WEBGL,
   parent: 'root',
   pixelArt: true,
+  zoom: 2,
   roundPixels: true,
-  width: 600,
-  height: 480,
+  width: 256,
+  height: 256,
   physics: {
     default: 'arcade',
     arcade: {
