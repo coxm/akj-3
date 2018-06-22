@@ -13,7 +13,6 @@ const levels = __LEVELS__.map(key => new Level({key}));
 
 
 const game = new Game({
-  type: WEBGL,
   parent: 'root',
   pixelArt: true,
   zoom: 2,
