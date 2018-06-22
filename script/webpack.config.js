@@ -13,6 +13,10 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 const PORT = process.env.PORT || '3000';
 const HOST = process.env.HOST || 'localhost';
 const REPO_ROOT = path.resolve(__dirname, '..');
+const LEVELS = process.env.LEVELS || (
+  require('fs').readdirSync('src/tilemaps')
+    .map(name => name.replace(/.json$/, ''))
+    .sort());
 
 
 process.traceDeprecation = true;
@@ -81,6 +85,7 @@ module.exports = {
       __PROD__: JSON.stringify(IS_PROD),
       __BUILD__: JSON.stringify(process.env.NODE_ENV),
       __TITLE__: JSON.stringify(title),
+      __LEVELS__: JSON.stringify(LEVELS),
       'process.env': JSON.stringify({
         // Including this supposedly reduces the size of node modules.
         NODE_ENV: process.env.NODE_ENV,
@@ -114,5 +119,8 @@ module.exports = {
   stats: {
     chunks: true,
     assetsSort: 'size',
+  },
+  devServer: {
+    contentBase: [path.resolve(REPO_ROOT, 'assets')],
   },
 };
