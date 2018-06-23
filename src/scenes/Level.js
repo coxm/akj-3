@@ -88,7 +88,7 @@ export class Level extends Phaser.Scene {
 
     this.targetLayer = this.tilemap.objects.find(
       layer => layer.name === 'invaderTargets');
-    this.invaderSpawns = this.loadSpawns('invaderSpawns');
+    this.invaderSpawns = this.loadSpawns('invaderSpawns', true);
     this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
   }
