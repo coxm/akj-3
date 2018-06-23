@@ -54,6 +54,12 @@ function placeStructureOnButtonClick(level) {
 
 export class Level extends Phaser.Scene {
   create() {
+    this.state = 1; // state is the current "wave"/event
+    this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
+
+    this.scoreText = this.add.text(750, 16, 'score: 0', { fontSize: '32px', fill: '#444' });
+    this.score = 0;
+
     this.createUI();
 
     this.mapOffsetX = 264;
@@ -83,7 +89,7 @@ export class Level extends Phaser.Scene {
     this.createInput();
   }
 
-  createUI() {
+  createUI() {    
     let ui_img = this.add.image(128, 768, 'ui-img');
 //    ui_img.displayHeight = 768;
 
@@ -183,10 +189,25 @@ export class Level extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this.step++;
     // Update the 'place object' sprite to the current mouse position.
     if (this.placingObject) {
       const {x, y} = this.input.mousePointer;
       this.placingObject.sprite.setPosition(x, y);
+    }
+    this.checkStateAndTriggerEvents();
+  }
+
+  checkStateAndTriggerEvents() {
+    if (this.step % 1000 == 0) {
+      this.state++;
+      for (let i=0; i<this.state; i++) {
+        this.spawnAttacker();
+        this.scoreText.setText("score: " + this.score + " / state: " + this.state);
+      }
+    }
+    else {
+      return false;
     }
   }
 
