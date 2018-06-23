@@ -56,7 +56,7 @@ export class Level extends Phaser.Scene {
   create() {
     this.createUI();
 
-    this.offsetX = 256;
+    this.offsetX = 264;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 16,
@@ -145,6 +145,9 @@ export class Level extends Phaser.Scene {
   }
 
   attemptObjectPlacement() {
+    if (this.input.mousePointer.x <= 264) { 
+      return; 
+    }
     const [tileX, tileY] = tilePositionOfPixels(
       this.input.mousePointer.x, this.input.mousePointer.y);
 
