@@ -8,6 +8,10 @@ export const gameWidth = mapWidth + menuWidth;
 export const gameHeight = Math.max(mapHeight, menuHeight);
 
 
+export const tileWidth = 16;
+export const tileHeight = 16;
+
+
 export const tilesetName = 'apoc16x16-img';
 
 
