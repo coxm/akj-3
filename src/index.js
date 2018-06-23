@@ -5,6 +5,7 @@ import './css/index.css';
 import {Boot} from './scenes/Boot';
 import {Title} from './scenes/Title';
 import {Level} from './scenes/Level';
+import {gameWidth, gameHeight} from './settings';
 
 
 const boot = new Boot({key: 'Boot'});
@@ -17,12 +18,12 @@ const game = new Game({
   pixelArt: true,
   zoom: 1,
   roundPixels: true,
-  width: 1280,
-  height: 768,
+  width: gameWidth,
+  height: gameHeight,
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: {y: 800},
+      gravity: {x: 0, y: 0},
       debug: __DEV__,
     },
   },
@@ -39,5 +40,5 @@ __DEV__ && Object.assign(window, {
   game,
   boot,
   title,
-  levels,
+  level: levels[0],
 });

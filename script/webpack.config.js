@@ -86,6 +86,7 @@ module.exports = {
       __BUILD__: JSON.stringify(process.env.NODE_ENV),
       __TITLE__: JSON.stringify(title),
       __LEVELS__: JSON.stringify(LEVELS),
+      __FIRST_SCENE__: JSON.stringify(process.env.FIRST_SCENE || 'Title'),
       'process.env': JSON.stringify({
         // Including this supposedly reduces the size of node modules.
         NODE_ENV: process.env.NODE_ENV,

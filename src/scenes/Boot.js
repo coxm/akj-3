@@ -1,5 +1,6 @@
 import {Scene, Tilemaps} from 'phaser';
 
+import {tilesetName} from '../settings';
 import level0Tilemap from '../tilemaps/Level0.json';
 
 
@@ -11,7 +12,7 @@ export class Boot extends Scene {
         data: level0Tilemap,
       });
     }
-    this.load.spritesheet('apoc16x16-img', 'assets/img/apocalypse.png', {
+    this.load.spritesheet(tilesetName, 'assets/img/apocalypse.png', {
       frameWidth: 16,
       frameHeight: 16,
       spacing: 0,
@@ -23,7 +24,7 @@ export class Boot extends Scene {
 
     this.load.on('complete', () => {
       console.log('Loaded');
-      this.scene.start('Title');
+      this.scene.start(__FIRST_SCENE__);
     });
   }
 }
