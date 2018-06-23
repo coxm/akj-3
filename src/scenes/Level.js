@@ -5,6 +5,7 @@ import {
 } from '../settings';
 import {randElement} from '../util';
 import {Ditch, Invader, Tower, Wall} from '../sprites/index';
+import {Score} from '../var/index';
 
 
 const placementModeInfo = {
@@ -56,9 +57,6 @@ export class Level extends Phaser.Scene {
   create() {
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
-
-    this.scoreText = this.add.text(750, 16, 'score: 0', { fontSize: '32px', fill: '#444' });
-    this.score = 0;
 
     this.createUI();
 
@@ -121,6 +119,9 @@ export class Level extends Phaser.Scene {
         this.enterPlacementMode(structureId);
       }, this);
     }
+    this.score = new Score();
+    this.scoreText = this.add.text(716, 16, 'Score: 0', { fontSize: '32px', fill: '#777' });
+
   }
 
   createInput() {
@@ -203,7 +204,7 @@ export class Level extends Phaser.Scene {
       this.state++;
       for (let i=0; i<this.state; i++) {
         this.spawnAttacker();
-        this.scoreText.setText("score: " + this.score + " / state: " + this.state);
+        this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
       }
     }
     else {
