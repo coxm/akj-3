@@ -60,12 +60,7 @@ export class Level extends Phaser.Scene {
     this.score = 0;
 
     this.createUI();
-    this.createTilemap();
-    this.createActors();
-    this.createInput();
-  }
 
-  createTilemap() {
     this.mapOffsetX = 264;
     this.mapOffsetY = 8;
     this.tilemap = this.make.tilemap({
@@ -78,31 +73,19 @@ export class Level extends Phaser.Scene {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
     }, {});
-  }
 
-  createActors() {
     this.groups = {
       placement: this.add.group(),
       actors: this.add.group(),
     };
-
-    const targetLayer = this.tilemap.objects.find(
-      layer => layer.name === 'invaderTargets');
-    __DEV__ && console.assert(targetLayer, 'No targetLayer in tile map!');
-
-    const findTarget = obj => {
-      const prop = requireNamedValue(obj.properties, 'target');
-      return requireNamedValue(targetLayer.objects, prop.value);
-    };
-
+    
     this.invaderSpawns = this.tilemap.objects
       .find(layer => layer.name === 'invaderSpawns')
       .objects
-      .map(obj => Object.assign(this.makePointObject(obj), {
-        target: this.makePointObject(findTarget(obj)),
-      }));
+      .map(obj => [Math.floor(obj.x), Math.floor(obj.y)]);
 
     this.placingObject = null; // {id: string; sprite: Sprite;}
+    this.createInput();
   }
 
   createUI() {    
@@ -137,6 +120,45 @@ export class Level extends Phaser.Scene {
         this.enterPlacementMode(structureId);
       }, this);
     }
+<<<<<<< HEAD
+=======
+
+    this.offsetX = 256;
+    this.tilemap = this.make.tilemap({
+      key: `tilemap:${this.sys.config.key}`,
+      tileWidth: 16,
+      tileHeight: 16,
+    });
+    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
+    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
+      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.offsetX, 0);
+      return dict;
+    }, {});
+
+    this.groups = {
+      placement: this.physics.add.group(),
+      actors: this.physics.add.group(),
+    };
+
+    const targetLayer = this.tilemap.objects.find(
+      layer => layer.name === 'invaderTargets');
+    __DEV__ && console.assert(targetLayer, 'No targetLayer in tile map!');
+
+    const findTarget = obj => {
+      const prop = requireNamedValue(obj.properties, 'target');
+      return requireNamedValue(targetLayer.objects, prop.value);
+    };
+
+    this.invaderSpawns = this.tilemap.objects
+      .find(layer => layer.name === 'invaderSpawns')
+      .objects
+      .map(obj => Object.assign(this.makePointObject(obj), {
+        target: this.makePointObject(findTarget(obj)),
+      }));
+
+    this.placingObject = null; // {id: string; sprite: Sprite;}
+    this.createInput();
+>>>>>>> Set up invader spawn points
   }
 
   createInput() {
@@ -183,9 +205,7 @@ export class Level extends Phaser.Scene {
     this.input.off('pointerdown', this.attemptObjectPlacement, this);
     const createSprite = placementModeInfo[this.placingObject.id].create;
     const [x, y] = pixelTopLeftOfTile(tileX, tileY);
-    const sprite = createSprite(this, x, y);
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
+    this.groups.actors.add(createSprite(this, x, y), true);
     this.resetObjectPlacement();
   }
 
@@ -213,11 +233,7 @@ export class Level extends Phaser.Scene {
       const {x, y} = this.input.mousePointer;
       this.placingObject.sprite.setPosition(x, y);
     }
-
-    for (const actor of this.groups.actors.children.entries) {
-      actor.update(time, delta);
-    }
-
+<<<<<<< HEAD
     this.checkStateAndTriggerEvents();
   }
 
@@ -231,6 +247,11 @@ export class Level extends Phaser.Scene {
     }
     else {
       return false;
+=======
+
+    for (const actor of this.groups.actors.children.entries) {
+      actor.update(time, delta);
+>>>>>>> Set up invader spawn points
     }
   }
 
@@ -254,7 +275,6 @@ export class Level extends Phaser.Scene {
     const spawn = randElement(this.invaderSpawns);
     const invader = new Invader(this, spawn.x, spawn.y);
     this.groups.actors.add(invader, true);
-    this.physics.add.existing(invader);
     invader.target = spawn.target;
     return invader;
   }
@@ -262,8 +282,8 @@ export class Level extends Phaser.Scene {
   makePointObject(obj) {
     return {
       data: obj,
-      x: Math.floor(obj.x) + this.mapOffsetX,
-      y: Math.floor(obj.y) + this.mapOffsetY,
+      x: Math.floor(obj.x) + this.offsetX,
+      y: Math.floor(obj.y),
     };
   }
 }
