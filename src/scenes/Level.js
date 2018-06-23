@@ -1,17 +1,31 @@
 import {Scene} from 'phaser';
 
 import {
-  tilesetName, wallFrame, tileWidth, tileHeight,
+  tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
 } from '../settings';
-import {Wall} from '../sprites/Wall';
+import {Ditch, Tower, Wall} from '../sprites/index';
 
 
 const placementModeInfo = {
+  ditch: {
+    sprite: null,
+    frame: ditchFrame,
+    create(level, x, y) {
+      return new Ditch(level, x, y);
+    },
+  },
   wall: {
     sprite: null,
     frame: wallFrame,
     create(level, x, y) {
       return new Wall(level, x, y);
+    },
+  },
+  tower: {
+    sprite: null,
+    frame: towerFrame,
+    create(level, x, y) {
+      return new Tower(level, x, y);
     },
   },
 };
@@ -51,11 +65,20 @@ export class Level extends Phaser.Scene {
   }
 
   createInput() {
-    this.input.keyboard.on('keydown_W', () => this.enterPlacementMode('wall'));
+    const keymap = {
+      'W': 'wall',
+      'T': 'tower',
+      'D': 'ditch',
+    };
+    for (const key in keymap) {
+      this.input.keyboard.on(
+        `keydown_${key}`, () => this.enterPlacementMode(keymap[key]));
+    }
     // TODO: on wall button click, enter wall placement mode.
   }
 
   enterPlacementMode(id) {
+    this.resetObjectPlacement();
     const pointer = this.input.mousePointer;
     const details = placementModeInfo[id];
     if (!details.sprite) {
@@ -84,9 +107,15 @@ export class Level extends Phaser.Scene {
     const createSprite = placementModeInfo[this.placingObject.id].create;
     const [x, y] = pixelTopLeftOfTile(tileX, tileY);
     this.groups.actors.add(createSprite(this, x, y), true);
-    this.placingObject.sprite.active = false;
-    this.placingObject.sprite.visible = false;
-    this.placingObject = null;
+    this.resetObjectPlacement();
+  }
+
+  resetObjectPlacement() {
+    if (this.placingObject) {
+      this.placingObject.sprite.active = false;
+      this.placingObject.sprite.visible = false;
+      this.placingObject = null;
+    }
   }
 
   update(time, delta) {
