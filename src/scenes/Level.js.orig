@@ -4,10 +4,7 @@ import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
 } from '../settings';
 import {randElement, requireNamedValue} from '../util';
-import {
-  Colonist, Ditch, Invader, Soldier, Tower, Wall,
-} from '../sprites/index';
-import {Score} from '../var/index';
+import {Ditch, Invader, Tower, Wall} from '../sprites/index';
 
 
 const placementModeInfo = {
@@ -59,13 +56,11 @@ export class Level extends Phaser.Scene {
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
 
-    this.createUI();
-    this.createTilemap();
-    this.createActors();
-    this.createInput();
-  }
+    this.scoreText = this.add.text(750, 16, 'score: 0', { fontSize: '32px', fill: '#444' });
+    this.score = 0;
 
-  createTilemap() {
+    this.createUI();
+
     this.mapOffsetX = 264;
     this.mapOffsetY = 8;
     this.tilemap = this.make.tilemap({
@@ -78,19 +73,19 @@ export class Level extends Phaser.Scene {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
     }, {});
-  }
 
-  createActors() {
     this.groups = {
       placement: this.add.group(),
       actors: this.add.group(),
     };
+    
+    this.invaderSpawns = this.tilemap.objects
+      .find(layer => layer.name === 'invaderSpawns')
+      .objects
+      .map(obj => [Math.floor(obj.x), Math.floor(obj.y)]);
 
-    this.targetLayer = this.tilemap.objects.find(
-      layer => layer.name === 'invaderTargets');
-    this.invaderSpawns = this.loadSpawns('invaderSpawns');
-    this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
+    this.createInput();
   }
 
   createUI() {    
@@ -101,7 +96,7 @@ export class Level extends Phaser.Scene {
       wall: this.add.sprite(64, 96, 'ui').setInteractive().setFrame(2),
       tower: this.add.sprite(192, 96, 'ui').setInteractive().setFrame(3),
       soldier: this.add.sprite(64, 288, 'ui').setInteractive().setFrame(8),
-      colonist: this.add.sprite(192, 288, 'ui').setInteractive().setFrame(9),
+      farmer: this.add.sprite(192, 288, 'ui').setInteractive().setFrame(9),
       upgrade_wall: this.add.sprite(64, 480, 'ui').setInteractive().setFrame(14),
       upgrade_tower: this.add.sprite(192, 480, 'ui').setInteractive().setFrame(15),
 
@@ -124,12 +119,46 @@ export class Level extends Phaser.Scene {
       button.on('pointerdown', function() {
         this.enterPlacementMode(structureId);
       }, this);
-    }    
-    this.buttons.soldier.on('pointerdown', () => { this.spawnSoldier(); });
-    this.buttons.colonist.on('pointerdown', () => { this.spawnColonist(); });
-    
-    this.score = new Score();
-    this.scoreText = this.add.text(716, 16, 'Score: 0', { fontSize: '32px', fill: '#777' });
+    }
+<<<<<<< HEAD
+=======
+
+    this.offsetX = 256;
+    this.tilemap = this.make.tilemap({
+      key: `tilemap:${this.sys.config.key}`,
+      tileWidth: 16,
+      tileHeight: 16,
+    });
+    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
+    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
+      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.offsetX, 0);
+      return dict;
+    }, {});
+
+    this.groups = {
+      placement: this.physics.add.group(),
+      actors: this.physics.add.group(),
+    };
+
+    const targetLayer = this.tilemap.objects.find(
+      layer => layer.name === 'invaderTargets');
+    __DEV__ && console.assert(targetLayer, 'No targetLayer in tile map!');
+
+    const findTarget = obj => {
+      const prop = requireNamedValue(obj.properties, 'target');
+      return requireNamedValue(targetLayer.objects, prop.value);
+    };
+
+    this.invaderSpawns = this.tilemap.objects
+      .find(layer => layer.name === 'invaderSpawns')
+      .objects
+      .map(obj => Object.assign(this.makePointObject(obj), {
+        target: this.makePointObject(findTarget(obj)),
+      }));
+
+    this.placingObject = null; // {id: string; sprite: Sprite;}
+    this.createInput();
+>>>>>>> Set up invader spawn points
   }
 
   createInput() {
@@ -176,9 +205,7 @@ export class Level extends Phaser.Scene {
     this.input.off('pointerdown', this.attemptObjectPlacement, this);
     const createSprite = placementModeInfo[this.placingObject.id].create;
     const [x, y] = pixelTopLeftOfTile(tileX, tileY);
-    const sprite = createSprite(this, x, y);
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
+    this.groups.actors.add(createSprite(this, x, y), true);
     this.resetObjectPlacement();
   }
 
@@ -206,11 +233,7 @@ export class Level extends Phaser.Scene {
       const {x, y} = this.input.mousePointer;
       this.placingObject.sprite.setPosition(x, y);
     }
-
-    for (const actor of this.groups.actors.children.entries) {
-      actor.update(time, delta);
-    }
-
+<<<<<<< HEAD
     this.checkStateAndTriggerEvents();
   }
 
@@ -219,11 +242,16 @@ export class Level extends Phaser.Scene {
       this.state++;
       for (let i=0; i<this.state; i++) {
         this.spawnAttacker();
-        this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
+        this.scoreText.setText("score: " + this.score + " / state: " + this.state);
       }
     }
     else {
       return false;
+=======
+
+    for (const actor of this.groups.actors.children.entries) {
+      actor.update(time, delta);
+>>>>>>> Set up invader spawn points
     }
   }
 
@@ -247,51 +275,15 @@ export class Level extends Phaser.Scene {
     const spawn = randElement(this.invaderSpawns);
     const invader = new Invader(this, spawn.x, spawn.y);
     this.groups.actors.add(invader, true);
-    this.physics.add.existing(invader);
     invader.target = spawn.target;
     return invader;
   }
 
-  spawnSoldier() {
-    return this.spawnFriendly(Soldier, 'SoldierSpawn');
-  }
-
-  spawnColonist() {
-    return this.spawnFriendly(Colonist, 'ColonistSpawn');
-  }
-
-  spawnFriendly(cls, spawnName) {
-    const spawn = requireNamedValue(this.friendlySpawns, spawnName);
-    const sprite = new cls(this, spawn.x, spawn.y);
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
-    return sprite;
-  }
-
   makePointObject(obj) {
-    return Object.assign({}, obj, {
-      x: Math.floor(obj.x) + this.mapOffsetX,
-      y: Math.floor(obj.y) + this.mapOffsetY,
-    });
-  }
-
-  findTarget(obj) {
-    const prop = requireNamedValue(obj.properties, 'target');
-    return requireNamedValue(this.targetLayer.objects, prop.value);
-  }
-
-  loadSpawns(tileLayerName, targetting) {
-    let objects = this.tilemap.objects
-      .find(layer => layer.name === tileLayerName)
-      .objects;
-    if (targetting) {
-      objects = objects.map(obj => Object.assign(this.makePointObject(obj), {
-        target: this.makePointObject(this.findTarget(obj)),
-      }));
-    }
-    else {
-      objects = objects.map(obj => this.makePointObject(obj));
-    }
-    return objects;
+    return {
+      data: obj,
+      x: Math.floor(obj.x) + this.offsetX,
+      y: Math.floor(obj.y),
+    };
   }
 }
