@@ -15,10 +15,10 @@ const levels = __LEVELS__.map(key => new Level({key}));
 const game = new Game({
   parent: 'root',
   pixelArt: true,
-  zoom: 2,
+  zoom: 1,
   roundPixels: true,
-  width: 256,
-  height: 256,
+  width: 1280,
+  height: 768,
   physics: {
     default: 'arcade',
     arcade: {

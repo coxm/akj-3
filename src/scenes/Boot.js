@@ -19,6 +19,8 @@ export class Boot extends Scene {
 
     // Load images here. Prefer to import JSON and other text assets into the
     // bundle.
+    this.load.image('ui', 'assets/img/ui.png');
+
     this.load.on('complete', () => {
       console.log('Loaded');
       this.scene.start('Title');

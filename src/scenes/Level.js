@@ -3,6 +3,8 @@ import {Scene} from 'phaser';
 
 export class Level extends Phaser.Scene {
   create() {
+    this.add.image(128, 384, 'ui');
+    this.offsetX = 256;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 16,
@@ -10,7 +12,7 @@ export class Level extends Phaser.Scene {
     });
     this.tileset = this.tilemap.addTilesetImage('apoc16x16', 'apoc16x16-img');
     this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
-      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, 0, 0);
+      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.offsetX, 0);
       return dict;
     }, {});
   }
