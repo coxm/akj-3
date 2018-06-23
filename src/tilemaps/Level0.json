@@ -168,8 +168,42 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"friendlySpawns",
+         "objects":[
+                {
+                 "height":0,
+                 "id":8,
+                 "name":"ColonistSpawn",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":71.7884130982368,
+                 "y":116.498740554156
+                }, 
+                {
+                 "height":0,
+                 "id":9,
+                 "name":"SoldierSpawn",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":40.6171284634761,
+                 "y":46.5994962216625
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":8,
+ "nextobjectid":10,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"2018.03.21",
