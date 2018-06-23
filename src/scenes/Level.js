@@ -3,7 +3,8 @@ import {Scene} from 'phaser';
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
 } from '../settings';
-import {Ditch, Tower, Wall} from '../sprites/index';
+import {randElement} from '../util';
+import {Ditch, Invader, Tower, Wall} from '../sprites/index';
 
 
 const placementModeInfo = {
@@ -71,6 +72,11 @@ export class Level extends Phaser.Scene {
       placement: this.add.group(),
       actors: this.add.group(),
     };
+    
+    this.invaderSpawns = this.tilemap.objects
+      .find(layer => layer.name === 'invaderSpawns')
+      .objects
+      .map(obj => [Math.floor(obj.x), Math.floor(obj.y)]);
 
     this.placingObject = null; // {id: string; sprite: Sprite;}
     this.createInput();
@@ -108,8 +114,6 @@ export class Level extends Phaser.Scene {
         this.enterPlacementMode(structureId);
       }, this);
     }
-
-
   }
 
   createInput() {
@@ -122,7 +126,6 @@ export class Level extends Phaser.Scene {
       this.input.keyboard.on(
         `keydown_${key}`, () => this.enterPlacementMode(keymap[key]));
     }
-    // TODO: on wall button click, enter wall placement mode.
   }
 
   enterPlacementMode(id) {
@@ -197,5 +200,11 @@ export class Level extends Phaser.Scene {
       }
     }
     return null;
+  }
+
+  spawnAttacker() {
+    const spawn = randElement(this.invaderSpawns);
+    const invader = new Invader(this, spawn[0] + this.offsetX, spawn[1]);
+    this.groups.actors.add(invader, true);
   }
 }

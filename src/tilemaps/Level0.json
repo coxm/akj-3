@@ -58,8 +58,42 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"invaderSpawns",
+         "objects":[
+                {
+                 "height":0,
+                 "id":2,
+                 "name":"Spawn1",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":8.50125944584384,
+                 "y":249.685138539043
+                }, 
+                {
+                 "height":0,
+                 "id":3,
+                 "name":"Spawn2",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":220.403022670025,
+                 "y":203.08564231738
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":2,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"2018.03.21",

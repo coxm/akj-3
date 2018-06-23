@@ -19,3 +19,4 @@ export const tilesetName = 'apoc16x16-img';
 export const ditchFrame = 160;
 export const towerFrame = 130;
 export const wallFrame = 465;
+export const invaderFrame = 771;
