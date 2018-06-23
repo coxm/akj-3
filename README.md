@@ -1,4 +1,5 @@
-# Phaser basecode (Phaser 3, ES6 with Babel, Webpack)
+# Alakajam 3: "always growing"
+Forked from a basecode repository [here](https://github.com/coxm/es6-phaser3-basecode).
 
 ## Getting started (development)
 Install packages:
