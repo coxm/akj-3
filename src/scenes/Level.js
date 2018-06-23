@@ -42,7 +42,17 @@ const pixelTopLeftOfTile = (x, y) => [x * tileWidth, y * tileHeight];
 
 export class Level extends Phaser.Scene {
   create() {
-    this.add.image(128, 384, 'ui');
+    let ui_img = this.add.image(128, 768, 'ui-img');
+//    ui_img.displayHeight = 768;
+
+    this.startBtn = this.add.sprite(64, 96, 'ui').setInteractive();
+    this.startBtn.setFrame(2);
+    this.startBtn.orgFrame = 2;
+
+    this.startBtn.on('pointerover', function (event) { /* Do something when the mouse enters */ });
+    this.startBtn.on('pointerout', function (event) { /* Do something when the mouse exits. */ });
+    this.startBtn.on('pointerdown', function(event) { this.startGame(true); }, this); // Start game on click.
+    this.startBtn.on('pointerup', function(event) { this.startGame(false); } , this); // Start game on click.
     this.offsetX = 256;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
@@ -115,6 +125,15 @@ export class Level extends Phaser.Scene {
       this.placingObject.sprite.active = false;
       this.placingObject.sprite.visible = false;
       this.placingObject = null;
+    }
+  }
+
+  startGame(down) {
+    if(down) {
+      this.startBtn.setFrame(this.startBtn.orgFrame+24);
+    } 
+    else {
+      this.startBtn.setFrame(this.startBtn.orgFrame);
     }
   }
 
