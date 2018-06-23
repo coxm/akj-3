@@ -54,12 +54,46 @@ function placeStructureOnButtonClick(level) {
 
 export class Level extends Phaser.Scene {
   create() {
+    this.createUI();
+
+    this.offsetX = 256;
+    this.tilemap = this.make.tilemap({
+      key: `tilemap:${this.sys.config.key}`,
+      tileWidth: 16,
+      tileHeight: 16,
+    });
+    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
+    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
+      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.offsetX, 0);
+      return dict;
+    }, {});
+
+    this.groups = {
+      placement: this.add.group(),
+      actors: this.add.group(),
+    };
+    
+    this.invaderSpawns = this.tilemap.objects
+      .find(layer => layer.name === 'invaderSpawns')
+      .objects
+      .map(obj => [Math.floor(obj.x), Math.floor(obj.y)]);
+
+    this.placingObject = null; // {id: string; sprite: Sprite;}
+    this.createInput();
+  }
+
+  createUI() {
     let ui_img = this.add.image(128, 768, 'ui-img');
 //    ui_img.displayHeight = 768;
 
     this.buttons = {
       wall: this.add.sprite(64, 96, 'ui').setInteractive().setFrame(2),
       tower: this.add.sprite(192, 96, 'ui').setInteractive().setFrame(3),
+      soldier: this.add.sprite(64, 288, 'ui').setInteractive().setFrame(8),
+      farmer: this.add.sprite(192, 288, 'ui').setInteractive().setFrame(9),
+      upgrade_wall: this.add.sprite(64, 480, 'ui').setInteractive().setFrame(14),
+      upgrade_tower: this.add.sprite(192, 480, 'ui').setInteractive().setFrame(15),
+
     };
     for (const key in this.buttons) {
       const button = this.buttons[key];
@@ -80,31 +114,6 @@ export class Level extends Phaser.Scene {
         this.enterPlacementMode(structureId);
       }, this);
     }
-
-    this.offsetX = 256;
-    this.tilemap = this.make.tilemap({
-      key: `tilemap:${this.sys.config.key}`,
-      tileWidth: 16,
-      tileHeight: 16,
-    });
-    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
-    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
-      dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.offsetX, 0);
-      return dict;
-    }, {});
-
-    this.groups = {
-      placement: this.add.group(),
-      actors: this.add.group(),
-    };
-
-    this.invaderSpawns = this.tilemap.objects
-      .find(layer => layer.name === 'invaderSpawns')
-      .objects
-      .map(obj => [Math.floor(obj.x), Math.floor(obj.y)]);
-
-    this.placingObject = null; // {id: string; sprite: Sprite;}
-    this.createInput();
   }
 
   createInput() {
