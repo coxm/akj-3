@@ -86,7 +86,7 @@ export class Level extends Phaser.Scene {
       tileHeight: 32,
     });
     this.tileset = this.tilemap.addTilesetImage('tileset', tilesetName);
-    this.tileLayers = ['ground', 'rear', 'fore', 'buildings'].reduce((dict, name) => {
+    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
     }, {});
@@ -107,11 +107,15 @@ export class Level extends Phaser.Scene {
 
     const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
     for (const b of buildings.objects) {
-      const sprite = this.physics.add.staticImage(
-        b.x + this.mapOffsetX, b.y + this.mapOffsetY, b.type);
+      const sprite = this.physics.add.staticSprite(
+        b.x + this.mapOffsetX + 2 * tileWidth,
+        b.y + this.mapOffsetY - 2 * tileHeight,
+        b.type);
       sprite.isFriendly = true;
       sprite.building = b;
       sprite.isBuilding = true;
+      this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
+      this.groups.actors.add(sprite);
     }
   }
 

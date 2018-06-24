@@ -67,18 +67,6 @@
                 }, 
                 {
                  "gid":1434,
-                 "height":160,
-                 "id":18,
-                 "name":"TownHall",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":480,
-                 "y":384
-                }, 
-                {
-                 "gid":1435,
                  "height":96,
                  "id":23,
                  "name":"FarmHouse",
@@ -90,7 +78,7 @@
                  "y":448
                 }, 
                 {
-                 "gid":1435,
+                 "gid":1434,
                  "height":96,
                  "id":24,
                  "name":"Barracks",
@@ -100,6 +88,18 @@
                  "width":128,
                  "x":288,
                  "y":288
+                }, 
+                {
+                 "gid":1435,
+                 "height":160,
+                 "id":27,
+                 "name":"TownHall",
+                 "rotation":0,
+                 "type":"TownHall",
+                 "visible":true,
+                 "width":128,
+                 "x":480,
+                 "y":384
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -255,7 +255,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":25,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"2018.03.21",
@@ -329,11 +329,11 @@
         {
          "columns":1,
          "firstgid":1433,
-         "image":"..\/..\/assets\/img\/buildings\/building_4x3.png",
+         "image":"..\/..\/assets\/img\/buildings\/plain.png",
          "imageheight":96,
          "imagewidth":128,
          "margin":0,
-         "name":"building_4x3",
+         "name":"plain",
          "spacing":0,
          "tilecount":1,
          "tileheight":96,
@@ -342,19 +342,6 @@
         {
          "columns":1,
          "firstgid":1434,
-         "image":"..\/..\/assets\/img\/buildings\/Building_4x5.png",
-         "imageheight":160,
-         "imagewidth":128,
-         "margin":0,
-         "name":"Building_4x5",
-         "spacing":0,
-         "tilecount":1,
-         "tileheight":160,
-         "tilewidth":128
-        }, 
-        {
-         "columns":1,
-         "firstgid":1435,
          "image":"..\/..\/assets\/img\/buildings\/SpecialBuilding.png",
          "imageheight":96,
          "imagewidth":128,
@@ -363,6 +350,19 @@
          "spacing":0,
          "tilecount":1,
          "tileheight":96,
+         "tilewidth":128
+        }, 
+        {
+         "columns":1,
+         "firstgid":1435,
+         "image":"..\/..\/assets\/img\/buildings\/town_hall_big.png",
+         "imageheight":160,
+         "imagewidth":128,
+         "margin":0,
+         "name":"town_hall_big",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":160,
          "tilewidth":128
         }],
  "tilewidth":32,
