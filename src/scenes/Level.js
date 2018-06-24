@@ -104,6 +104,24 @@ export class Level extends Phaser.Scene {
     this.invaderSpawns = this.loadSpawns('invaderSpawns', true);
     this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
+
+    const buildingPhysics = requireNamedValue(
+      this.tilemap.objects, 'buildingPhysics');
+    for (const obj of buildingPhysics.objects) {
+      // This is the only way I can find to add a sprite-less body.
+      const fakeSprite = this.add.sprite(
+        obj.x + tileWidth / 2 + this.mapOffsetX,
+        obj.y + tileHeight / 2 + this.mapOffsetY);
+      fakeSprite.width = obj.width;
+      fakeSprite.height = obj.height;
+      fakeSprite.isBuilding = true;
+      fakeSprite.building = obj;
+      fakeSprite.isFriendly = true;
+      // TODO: building physics broken!
+      // this.physics.add.existing(fakeSprite, true); // Doesn't work either
+      this.physics.world.enable(fakeSprite, Physics.Arcade.STATIC_BODY);
+      this.groups.actors.add(fakeSprite, false);
+    }
   }
 
   createUI() {    
@@ -305,7 +323,12 @@ export class Level extends Phaser.Scene {
     for (let i = 0; i < len; ++i) {
       for (let j = i + 1; j < len; ++j) {
         this.physics.world.collide(
-          actors[i], actors[j], this.onActorCollision, undefined, this);
+          actors[i],
+          actors[j],
+          this.onActorCollision, // Collision callback.
+          () => true, // Process callback. 
+          this // Callback context.
+        );
       }
     }
 
@@ -337,13 +360,16 @@ export class Level extends Phaser.Scene {
       return;
     }
 
-    if (actorA.isFriendly){ 
+    if (!actorA.isFriendly){ 
       [actorA, actorB] = [actorB, actorA];
     }
     // Now actorA is the AI.
 
     // Weed and Invader instances can attack all units.
-    if (actorA instanceof Invader) {
+    if (actorB.isBuilding) {
+      actorA.attackBuilding(actorB);
+    }
+    else {
       actorA.attackTarget(actorB);
     }
   }
