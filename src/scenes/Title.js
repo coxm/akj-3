@@ -12,8 +12,8 @@ export class Title extends Scene {
     const title = this.add.image(0.5 * width, 0.4 * height, 'title');
     title.setScale(2);
     let gameText = this.add.text(80, 620, 'A game made by @James_Deans_Jeans, @gsamaro, @Kyle3wynn, @toasty and @dollarone' +
-    '\n                                for the 3rd Alakajam!', { fontSize: '24px', fill: '#777' });
-    let titleText = this.add.text(450, 700, 'Click anywhere to start', { fontSize: '32px', fill: '#777' });
+    '\n                             for the 3rd Alakajam!', { fontSize: '24px', fill: '#777' });
+    let titleText = this.add.text(420, 700, 'Click anywhere to start', { fontSize: '32px', fill: '#777' });
     this.introMusic = this.sound.add('intro-theme');
     this.introMusic.play();
 
