@@ -3,6 +3,7 @@ import {Physics, Scene} from 'phaser';
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
   structureAssembleRate,
+  woodRequiredForStructure, woodGainedFromKilling, initialWood,
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
@@ -55,10 +56,20 @@ function placeStructureOnButtonClick(level) {
 
 
 export class Level extends Phaser.Scene {
+  get wood() {
+    return this.woodRemaining;
+  }
+
+  set wood(value) {
+    this.woodRemaining = value;
+    this.woodText.setText(`Wood: ${value}`);
+  }
+
   create() {
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
 
+    this.woodRemaining = initialWood;
     this.createUI();
     this.createTilemap();
     this.createActors();
@@ -131,6 +142,10 @@ export class Level extends Phaser.Scene {
     
     this.score = new Score();
     this.scoreText = this.add.text(716, 16, 'Score: 0', { fontSize: '32px', fill: '#777' });
+    this.woodText = this.add.text(716, 72, `Wood: ${this.woodRemaining}`, {
+      fontSize: '32px',
+      fill: '#777',
+    });
   }
 
   createInput() {
@@ -147,11 +162,20 @@ export class Level extends Phaser.Scene {
 
   enterPlacementMode(id) {
     this.resetObjectPlacement();
+
+    const woodRequired = woodRequiredForStructure[id];
+    if (this.wood < woodRequired) {
+      // TODO: add text object explaining.
+      console.log('Insufficient wood for', id);
+      return;
+    }
+
     const pointer = this.input.mousePointer;
     const details = placementModeInfo[id];
     if (!details.sprite) {
       details.sprite = this.add.sprite(
         pointer.x, pointer.y, tilesetName, details.frame);
+      details.sprite.alpha = 0.5;
       this.groups.placement.add(details.sprite);
     }
     const sprite = details.sprite;
@@ -181,6 +205,7 @@ export class Level extends Phaser.Scene {
     this.groups.assembling.add(sprite, true);
     sprite.alpha = 0;
     sprite.health = 0;
+    this.wood -= woodRequiredForStructure[this.placingObject.id];
     this.resetObjectPlacement();
   }
 
