@@ -35,7 +35,7 @@ export class Boot extends Scene {
       frameHeight: 32,
       spacing: 0,
     });
-    this.load.spritesheet(soldierProperties.tileset, 'assets/img/farmer.png', {
+    this.load.spritesheet(soldierProperties.tileset, 'assets/img/soldier.png', {
       frameWidth: 32,
       frameHeight: 32,
       spacing: 0,

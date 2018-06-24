@@ -43,7 +43,7 @@ export const twigProperties = {
   attackStrength: 8,
   maxHealth: 100,
   tileset: 'twig-monster',
-  frame: 122,
+  frame: 0,
 };
 export const flowerProperties = {
   speed: 4,
@@ -51,15 +51,15 @@ export const flowerProperties = {
   attackStrength: 30,
   maxHealth: 200,
   tileset: 'flower-monster',
-  frame: 771,
+  frame: 0,
 };
 export const soldierProperties = {
   speed: 16,
   attackRadius: tileWidth,
   attackStrength: 8,
   maxHealth: 100,
-  tileset: 'farmer',
-  frame: 46,
+  tileset: 'soldier',
+  frame: 0,
 };
 export const colonistProperties = {
   speed: 14,
@@ -67,7 +67,7 @@ export const colonistProperties = {
   attackStrength: 4,
   maxHealth: 50,
   tileset: 'farmer',
-  frame: 47,
+  frame: 0,
 };
 
 
