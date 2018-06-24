@@ -44,6 +44,7 @@ export const twigProperties = {
   maxHealth: 100,
   tileset: 'twig-monster',
   frame: 122,
+  isFriendly: false,
 };
 export const flowerProperties = {
   speed: 4,
@@ -52,6 +53,7 @@ export const flowerProperties = {
   maxHealth: 200,
   tileset: 'flower-monster',
   frame: 771,
+  isFriendly: false,
 };
 export const soldierProperties = {
   speed: 16,
@@ -60,6 +62,7 @@ export const soldierProperties = {
   maxHealth: 100,
   tileset: 'farmer',
   frame: 46,
+  isFriendly: true,
 };
 export const colonistProperties = {
   speed: 14,
@@ -68,6 +71,7 @@ export const colonistProperties = {
   maxHealth: 50,
   tileset: 'farmer',
   frame: 47,
+  isFriendly: true,
 };
 
 
