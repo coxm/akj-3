@@ -318,14 +318,12 @@ export class Level extends Phaser.Scene {
       return;
     }
 
-    const aIsFriendly = isFriendly(actorA);
-    const bIsFriendly = isFriendly(actorB);
-    if (aIsFriendly === bIsFriendly) {
+    if (actorA.isFriendly === actorB.isFriendly) {
       // Actors don't attack others on their own side.
       return;
     }
 
-    if (aIsFriendly){ 
+    if (actorA.isFriendly){ 
       [actorA, actorB] = [actorB, actorA];
     }
     // Now actorA is the AI.

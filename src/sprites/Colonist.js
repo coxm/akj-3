@@ -1,10 +1,11 @@
 import {GameObjects} from 'phaser';
 
-import {tilesetName, colonistFrame} from '../settings';
+import {colonistFrame, colonistProperties} from '../settings';
+import {AnyAttacker} from './AnyAttacker';
 
 
-export class Colonist extends GameObjects.Sprite {
-  constructor(level, x, y) {
-    super(level, x, y, tilesetName, colonistFrame);
+export class Colonist extends AnyAttacker {
+  constructor(level, x, y, properties) {
+    super(level, x, y, colonistFrame, colonistProperties);
   }
 }

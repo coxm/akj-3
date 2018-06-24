@@ -53,6 +53,18 @@ export const flowerProperties = {
   attackStrength: 30,
   maxHealth: 200,
 };
+export const soldierProperties = {
+  speed: 16,
+  attackRadius: tileWidth,
+  attackStrength: 8,
+  maxHealth: 100,
+};
+export const colonistProperties = {
+  speed: 14,
+  attackRadius: tileWidth,
+  attackStrength: 4,
+  maxHealth: 50,
+};
 
 
 export const woodRequiredForStructure = {
