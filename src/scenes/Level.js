@@ -330,7 +330,7 @@ export class Level extends Phaser.Scene {
 
     // Weed and Invader instances can attack all units.
     if (actorA instanceof Invader) {
-      actorA.attack(actorB);
+      actorA.attackTarget(actorB);
     }
   }
 
