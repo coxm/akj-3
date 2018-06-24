@@ -29,6 +29,7 @@ export class Title extends Scene {
     });
 
     this.input.on('pointerdown', function() {
+      this.introMusic.stop();
       this.scene.start('Level0');
     }, this);
   }
