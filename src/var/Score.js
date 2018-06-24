@@ -5,12 +5,15 @@ export class Score {
     this.creeps = 0;
     this.treasures = 0;
     this.bosses = 0;
+    this.farmers = 0;
+    this.soldiers = 0;
 
     this.scorePerInvader = 2;
     this.scorePerWood = 1;
     this.scorePerCreep = 1;
     this.scorePerTreasure = 100;
     this.scorePerBoss = 100;
+    //no score for units produced
 
 
     this.debug = true;
