@@ -2,7 +2,7 @@ import {Physics, Scene} from 'phaser';
 
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
-  structureAssembleRate, gameHeight, gameWidth,
+  structureAssembleRate, gameHeight, gameWidth, woodRequiredForUnit,
   woodRequiredForStructure, woodGainedFromKilling, initialWood,
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
@@ -78,15 +78,15 @@ export class Level extends Phaser.Scene {
   }
 
   createTilemap() {
-    this.mapOffsetX = 270;
-    this.mapOffsetY = 17;
+    this.mapOffsetX = 271;
+    this.mapOffsetY = 16;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 32,
       tileHeight: 32,
     });
     this.tileset = this.tilemap.addTilesetImage('tileset', tilesetName);
-    this.tileLayers = ['ground', 'rear', 'fore','buildings'].reduce((dict, name) => {
+    this.tileLayers = ['ground', 'rear', 'fore', 'buildings'].reduce((dict, name) => {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
     }, {});
@@ -388,6 +388,13 @@ export class Level extends Phaser.Scene {
   }
 
   spawnFriendly(cls, spawnName) {
+    const woodRequired = woodRequiredForUnit[cls.name];
+    if (this.wood < woodRequired) {
+      // TODO: add text object explaining.
+      console.log('Insufficient wood for', cls.name);
+      return false;
+    }
+
     const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
     this.addSpriteAndCreateBody(sprite);

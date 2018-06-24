@@ -16,9 +16,9 @@ export const tilesetName = 'tileset';
 
 
 /** Sprite frames within the tileset. */
-export const ditchFrame = 160;
-export const towerFrame = 130;
-export const wallFrame = 465;
+export const ditchFrame = 65;
+export const towerFrame = 67;
+export const wallFrame = 103;
 
 
 /** The health gained on each update by a structure during construction. */
@@ -72,6 +72,11 @@ export const colonistProperties = {
   tileset: 'farmer',
   frame: 0,
   isFriendly: true,
+};
+
+export const woodRequiredForUnit = {
+  Soldier: 30,
+  Colonist: 20,
 };
 
 
