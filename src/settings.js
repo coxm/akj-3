@@ -18,10 +18,11 @@ export const tilesetName = 'apoc16x16-img';
 /** Sprite frames within the tileset. */
 export const colonistFrame = 47;
 export const ditchFrame = 160;
+export const flowerFrame = 771;
 export const soldierFrame = 46;
 export const towerFrame = 130;
+export const twigFrame = 122;
 export const wallFrame = 465;
-export const invaderFrame = 771;
 
 
 /** The health gained on each update by a structure during construction. */
@@ -34,4 +35,18 @@ export const towerMaxHealth = 150;
 export const wallMaxHealth = 120;
 
 
-export const invaderSpeed = 8;
+/** Attacker properties. */
+export const weedProperties = {
+  attackRadius: tileWidth,
+  attackStrength: 5,
+};
+export const twigProperties = {
+  speed: 8,
+  attackRadius: tileWidth,
+  attackStrength: 15,
+};
+export const flowerProperties = {
+  speed: 15,
+  attackRadius: tileWidth,
+  attackStrength: 30,
+};

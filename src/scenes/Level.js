@@ -4,9 +4,9 @@ import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
   structureAssembleRate,
 } from '../settings';
-import {randElement, requireNamedValue} from '../util';
+import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
-  Colonist, Ditch, Invader, Soldier, Tower, Wall,
+  Colonist, Ditch, Flower, Invader, Soldier, Tower, Twig, Wall,
 } from '../sprites/index';
 import {Score} from '../var/index';
 
@@ -36,13 +36,12 @@ const placementModeInfo = {
 };
 
 
-const tilePositionOfPixels = (x, y) => [
-  Math.floor(x / tileWidth + 0.5),
-  Math.floor(y / tileHeight + 0.5)
-];
-
-
 const pixelTopLeftOfTile = (x, y) => [x * tileWidth, y * tileHeight];
+
+
+const isFriendly = sprite => (
+  sprite instanceof Invader // Includes Flower and Twig.
+);
 
 
 /**
@@ -247,6 +246,23 @@ export class Level extends Phaser.Scene {
       return;
     }
     console.log('collision', actorA.constructor.name, actorB.constructor.name);
+
+    const aIsFriendly = isFriendly(actorA);
+    const bIsFriendly = isFriendly(actorB);
+    if (aIsFriendly === bIsFriendly) {
+      // Actors don't attack others on their own side.
+      return;
+    }
+
+    if (aIsFriendly){ 
+      [actorA, actorB] = [actorB, actorA];
+    }
+    // Now actorA is the AI.
+
+    // Weed and Invader instances can attack all units.
+    if (actorA instanceof Invader) {
+      actorA.attack(actorB);
+    }
   }
 
   checkStateAndTriggerEvents() {
@@ -284,10 +300,12 @@ export class Level extends Phaser.Scene {
     this.physics.world.enable(sprite, bodyType);
   }
 
-  spawnAttacker(spawn = randElement(this.invaderSpawns)) {
-    const invader = new Invader(this, spawn.x, spawn.y, spawn.target);
+  spawnAttacker(
+    spawn = randElement(this.invaderSpawns),
+    attackerClass = Math.random() > 0.5 ? Flower : Twig
+  ) {
+    const invader = new attackerClass(this, spawn.x, spawn.y, spawn.target);
     this.addSpriteAndCreateBody(invader);
-    invader.approachTarget(spawn.target);
     return invader;
   }
 
