@@ -16,12 +16,8 @@ export const tilesetName = 'tileset';
 
 
 /** Sprite frames within the tileset. */
-export const colonistFrame = 47;
 export const ditchFrame = 160;
-export const flowerFrame = 771;
-export const soldierFrame = 46;
 export const towerFrame = 130;
-export const twigFrame = 122;
 export const wallFrame = 465;
 
 
@@ -46,24 +42,32 @@ export const twigProperties = {
   attackRadius: tileWidth,
   attackStrength: 8,
   maxHealth: 100,
+  tileset: 'twig-monster',
+  frame: 122,
 };
 export const flowerProperties = {
   speed: 4,
   attackRadius: tileWidth,
   attackStrength: 30,
   maxHealth: 200,
+  tileset: 'flower-monster',
+  frame: 771,
 };
 export const soldierProperties = {
   speed: 16,
   attackRadius: tileWidth,
   attackStrength: 8,
   maxHealth: 100,
+  tileset: 'farmer',
+  frame: 46,
 };
 export const colonistProperties = {
   speed: 14,
   attackRadius: tileWidth,
   attackStrength: 4,
   maxHealth: 50,
+  tileset: 'farmer',
+  frame: 47,
 };
 
 

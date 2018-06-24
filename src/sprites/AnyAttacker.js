@@ -1,6 +1,5 @@
 import {GameObjects} from 'phaser';
 
-import {tilesetName} from '../settings';
 import {distance} from '../util';
 
 
@@ -15,8 +14,10 @@ export const modeAttacking = 2;
  * Extended by most other sprites (friendly or not).
  */
 export class AnyAttacker extends GameObjects.Sprite {
-  constructor(level, x, y, frameIndex, properties) {
-    super(level, x, y, tilesetName, frameIndex);
+  constructor(level, x, y, properties) {
+    console.assert(typeof properties.tileset === 'string', 'Invalid tileset');
+    console.assert(typeof properties.frame === 'number', 'Invalid frame');
+    super(level, x, y, properties.tileset, properties.frameIndex);
     this.speed = properties.speed;
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;
