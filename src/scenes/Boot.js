@@ -7,6 +7,11 @@ import {
 import level0Tilemap from '../tilemaps/Level0.json';
 
 
+__DEV__ && Object.assign(window, {
+  tilemap: level0Tilemap,
+});
+
+
 export class Boot extends Scene {
   preload() {
     for (const levelName of ['Level0']) {
