@@ -49,6 +49,7 @@ export class Boot extends Scene {
     // Load images here. Prefer to import JSON and other text assets into the
     // bundle.
     this.load.image('ui-img', 'assets/img/ui.png');
+    this.load.image('title', 'assets/img/title_screen_the_growth.png');
 
     this.load.spritesheet('ui', 'assets/img/ui.png', {
       frameWidth: 128,

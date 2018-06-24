@@ -149,6 +149,19 @@ export class Level extends Phaser.Scene {
       fontSize: '32px',
       fill: '#777',
     });
+    let wall_cost_img = this.add.image(50, 110, 'tileset');
+    wall_cost_img.setFrame(69);
+    let wall_cost_label = this.add.text(70, 98, '' + woodRequiredForStructure["wall"], { fontSize: '24px', fill: '#111' });
+    let tower_cost_img = this.add.image(178, 110, 'tileset');
+    tower_cost_img.setFrame(69);
+    let tower_cost_label = this.add.text(198, 98, '' + woodRequiredForStructure["tower"], { fontSize: '24px', fill: '#111' });
+
+    let soldier_cost_img = this.add.image(50, 302, 'tileset');
+    soldier_cost_img.setFrame(69);
+    let soldier_cost_label = this.add.text(70, 290, '' + woodRequiredForUnit["Soldier"], { fontSize: '24px', fill: '#111' });
+    let farmer_cost_img = this.add.image(178, 302, 'tileset');
+    farmer_cost_img.setFrame(69);
+    let farmer_cost_label = this.add.text(198, 290, '' + woodRequiredForUnit["Colonist"], { fontSize: '24px', fill: '#111' });
   }
 
   createInput() {
