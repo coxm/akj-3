@@ -13,8 +13,8 @@ export class Boot extends Scene {
       });
     }
     this.load.spritesheet(tilesetName, 'assets/img/tileset.png', {
-      frameWidth: 16,
-      frameHeight: 16,
+      frameWidth: 32,
+      frameHeight: 32,
       spacing: 0,
     });
 
