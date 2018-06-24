@@ -245,7 +245,6 @@ export class Level extends Phaser.Scene {
     if (actorA.constructor === actorB.constructor) {
       return;
     }
-    console.log('collision', actorA.constructor.name, actorB.constructor.name);
 
     const aIsFriendly = isFriendly(actorA);
     const bIsFriendly = isFriendly(actorB);
