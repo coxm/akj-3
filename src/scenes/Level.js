@@ -2,6 +2,7 @@ import {Physics, Scene} from 'phaser';
 
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
+  structureAssembleRate,
 } from '../settings';
 import {randElement, requireNamedValue} from '../util';
 import {
@@ -84,6 +85,7 @@ export class Level extends Phaser.Scene {
     this.groups = {
       placement: this.add.group(),
       actors: this.add.group(),
+      assembling: this.add.group(),
     };
 
     this.targetLayer = this.tilemap.objects.find(
@@ -177,8 +179,9 @@ export class Level extends Phaser.Scene {
     const createSprite = placementModeInfo[this.placingObject.id].create;
     const [x, y] = pixelTopLeftOfTile(tileX, tileY);
     const sprite = createSprite(this, x, y);
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
+    this.groups.assembling.add(sprite, true);
+    sprite.alpha = 0;
+    sprite.health = 0;
     this.resetObjectPlacement();
   }
 
@@ -220,6 +223,23 @@ export class Level extends Phaser.Scene {
           actors[i], actors[j], this.onActorCollision, undefined, this);
       }
     }
+
+    // For each structure being assembled, increment its health. If the
+    // structure has reached full health, create a proper actor for it in that
+    // place.
+    for (const struct of this.groups.assembling.children.entries) {
+      struct.health += structureAssembleRate;
+      if (struct.health >= struct.maxHealth) {
+        struct.health = struct.maxHealth;
+        struct.alpha = 1;
+        this.groups.assembling.remove(struct);
+        this.physics.world.enable(struct, Physics.Arcade.STATIC_BODY);
+        this.groups.actors.add(struct);
+      }
+      else {
+        struct.alpha = struct.health / struct.maxHealth;
+      }
+    }
   }
 
   onActorCollision(actorA, actorB) {
@@ -258,11 +278,15 @@ export class Level extends Phaser.Scene {
     return null;
   }
 
+  addSpriteAndCreateBody(sprite, bodyType = Physics.Arcade.DYNAMIC_BODY) {
+    this.groups.actors.add(sprite, true);
+    this.physics.add.existing(sprite);
+    this.physics.world.enable(sprite, bodyType);
+  }
+
   spawnAttacker(spawn = randElement(this.invaderSpawns)) {
     const invader = new Invader(this, spawn.x, spawn.y);
-    this.groups.actors.add(invader, true);
-    this.physics.add.existing(invader);
-    this.physics.world.enable(invader, Physics.Arcade.DYNAMIC_BODY);
+    this.addSpriteAndCreateBody(invader);
     invader.target = spawn.target;
     return invader;
   }
@@ -278,9 +302,7 @@ export class Level extends Phaser.Scene {
   spawnFriendly(cls, spawnName) {
     const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
-    this.physics.world.enable(sprite, Physics.Arcade.DYNAMIC_BODY);
+    this.addSpriteAndCreateBody(sprite);
     return sprite;
   }
 

@@ -22,3 +22,13 @@ export const soldierFrame = 46;
 export const towerFrame = 130;
 export const wallFrame = 465;
 export const invaderFrame = 771;
+
+
+/** The health gained on each update by a structure during construction. */
+export const structureAssembleRate = 2;
+
+
+/** Sprite max health. */
+export const ditchMaxHealth = 50;
+export const towerMaxHealth = 150;
+export const wallMaxHealth = 120;
