@@ -1,21 +1,24 @@
 import {GameObjects} from 'phaser';
 
-import {tilesetName, invaderFrame} from '../settings';
+import {tilesetName, invaderFrame, invaderSpeed} from '../settings';
 
 
 export class Invader extends GameObjects.Sprite {
-  constructor(level, x, y) {
+  constructor(level, x, y, target) {
     super(level, x, y, tilesetName, invaderFrame);
-    this.speed = 0.5;
   }
 
-  update(time, delta) {
+  approachTarget(target) {
+    this.target = target;
     const signX = Math.sign(this.target.x - this.x);
     const signY = Math.sign(this.target.y - this.y);
     if (signX !== 0 || signY !== 0) {
       this.body.setVelocity(
-        Math.floor(delta * this.speed * signX),
-        Math.floor(delta * this.speed * signY));
+        Math.floor(invaderSpeed * signX),
+        Math.floor(invaderSpeed * signY));
     }
+  }
+
+  update(time, delta) {
   }
 }

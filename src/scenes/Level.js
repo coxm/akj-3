@@ -285,9 +285,9 @@ export class Level extends Phaser.Scene {
   }
 
   spawnAttacker(spawn = randElement(this.invaderSpawns)) {
-    const invader = new Invader(this, spawn.x, spawn.y);
+    const invader = new Invader(this, spawn.x, spawn.y, spawn.target);
     this.addSpriteAndCreateBody(invader);
-    invader.target = spawn.target;
+    invader.approachTarget(spawn.target);
     return invader;
   }
 

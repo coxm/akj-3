@@ -32,3 +32,6 @@ export const structureAssembleRate = 2;
 export const ditchMaxHealth = 50;
 export const towerMaxHealth = 150;
 export const wallMaxHealth = 120;
+
+
+export const invaderSpeed = 8;
