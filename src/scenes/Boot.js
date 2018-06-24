@@ -62,6 +62,8 @@ export class Boot extends Scene {
     });
 
     this.load.audio("intro-theme", ["/assets/sfx/intro-theme.ogg"]);
+    this.load.audio("main-theme", ["/assets/sfx/main-small.ogg"]);
+    this.load.audio("main-theme-dramatic", ["/assets/sfx/main-small2.ogg"]);
 
     this.load.on('complete', () => {
       console.log('Loaded');
