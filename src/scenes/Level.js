@@ -2,7 +2,7 @@ import {Physics, Scene} from 'phaser';
 
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
-  structureAssembleRate,
+  structureAssembleRate, gameHeight, gameWidth,
   woodRequiredForStructure, woodGainedFromKilling, initialWood,
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
@@ -68,12 +68,13 @@ export class Level extends Phaser.Scene {
   create() {
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
+    this.gameover = false;
 
     this.woodRemaining = initialWood;
-    this.createUI();
     this.createTilemap();
     this.createActors();
     this.createInput();
+    this.createUI();
   }
 
   createTilemap() {
@@ -421,4 +422,33 @@ export class Level extends Phaser.Scene {
     }
     return objects;
   }
+
+  endGame() { 
+    if (this.gameover) { 
+      return;
+    }
+    this.gameover = true;
+    let graphics = this.add.graphics();
+    graphics.fillRect(0, 0, gameWidth, gameHeight);
+    graphics.setAlpha(0);
+    var tween = this.tweens.add({
+        targets: graphics,
+        props: {
+            alpha: 0.7
+        },
+        duration: 3000,
+        yoyo: false,
+        repeat: 0
+    });
+    let gameoverScreen = this.add.graphics();
+    gameoverScreen.fillStyle(0x999999, 1);
+    gameoverScreen.fillRect(300, 150, gameWidth-600, gameHeight-300);
+    let gameoverText = this.add.text(550, 180, 'Game over', { fontSize: '32px', fill: '#000' });
+    let summaryText = this.add.text(360, 230, 'The village has fallen to the Growth!\n\nYour score was: ' 
+      + this.score.getScore() + "\n\nYou killed:\n * " + this.score.invaders + " twig monsters\n * " + this.score.bosses 
+      + " flower monsters\n * " + this.score.creeps + " growth creeps\n\nYou also harvested " + this.score.wood
+      + " pieces of wood,\nand you recruited:\n * " + this.score.farmers + " farmers\n * " + this.score.soldiers + " soldiers", 
+      { fontSize: '24px', fill: '#111' });
+
+  }  
 }
