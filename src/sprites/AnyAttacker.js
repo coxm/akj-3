@@ -8,6 +8,13 @@ export const modeMoving = 1;
 export const modeAttacking = 2;
 
 
+const healthBarColour = ratio => {
+  const red = Math.max(0, 255 - ratio * 255);
+  const green = Math.min(0, ratio * 255);
+  return red | (green < 8);
+};
+
+
 /**
  * Any Sprite class that can attack and approach other things.
  *
@@ -25,6 +32,10 @@ export class AnyAttacker extends GameObjects.Sprite {
     this.health = this.maxHealth = properties.maxHealth;
     this.mode = modeNone;
     this.isFriendly = properties.isFriendly;
+    const healthBar = this.healthBar = level.add.graphics();
+    healthBar.lastHealth = this.health;
+    this.on('destroy', () => { healthBar.destroy(); });
+    this.updateHealthBar();
   }
 
   /**
@@ -68,6 +79,8 @@ export class AnyAttacker extends GameObjects.Sprite {
   }
 
   update() {
+    this.updateHealthBar();
+
     if (!this.target) {
       // It's valid for some (e.g. player-owned) units not to have a target.
       return;
@@ -80,5 +93,18 @@ export class AnyAttacker extends GameObjects.Sprite {
     else {
       this.approachTarget();
     }
+  }
+
+  updateHealthBar() {
+    this.healthBar.x = this.x;
+    this.healthBar.y = this.y + this.height;
+    if (this.healthBar.lastHealth === this.health) {
+      return;
+    }
+    const ratio = this.health / this.maxHealth;
+    const colour = healthBarColour(ratio);
+    this.healthBar.fillStyle(colour, 1);
+    this.healthBar.fillRect(
+      0, 10 * this.height, Math.floor(this.width * ratio), 10);
   }
 }
