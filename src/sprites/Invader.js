@@ -20,6 +20,7 @@ export class Invader extends GameObjects.Sprite {
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;
     this.target = properties.target;
+    this.health = this.maxHealth = properties.maxHealth;
     this.mode = modeNone;
   }
 

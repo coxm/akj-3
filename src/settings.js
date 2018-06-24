@@ -39,14 +39,35 @@ export const wallMaxHealth = 120;
 export const weedProperties = {
   attackRadius: tileWidth,
   attackStrength: 5,
+  maxHealth: 20,
 };
 export const twigProperties = {
-  speed: 8,
+  speed: 16,
   attackRadius: tileWidth,
-  attackStrength: 15,
+  attackStrength: 8,
+  maxHealth: 100,
 };
 export const flowerProperties = {
-  speed: 15,
+  speed: 4,
   attackRadius: tileWidth,
   attackStrength: 30,
+  maxHealth: 200,
 };
+
+
+export const woodRequiredForStructure = {
+  ditch: 5,
+  tower: 50,
+  wall: 10,
+};
+
+
+export const woodGainedFromKilling = {
+  Weed: 10,
+  Twig: 50,
+  Flower: 100,
+};
+
+
+/** The initial wood in the player's stockpile. */
+export const initialWood = 100;
