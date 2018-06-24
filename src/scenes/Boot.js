@@ -50,6 +50,9 @@ export class Boot extends Scene {
     // bundle.
     this.load.image('ui-img', 'assets/img/ui.png');
     this.load.image('title', 'assets/img/title_screen_the_growth.png');
+    this.load.image('Barracks', 'assets/img/buildings/SpecialBuilding.png');
+    this.load.image('FarmHouse', 'assets/img/buildings/SpecialBuilding.png');
+    this.load.image('PlainBuilding', 'assets/img/buildings/building_4x3.png');
 
     this.load.spritesheet('ui', 'assets/img/ui.png', {
       frameWidth: 128,

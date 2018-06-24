@@ -105,22 +105,13 @@ export class Level extends Phaser.Scene {
     this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
 
-    const buildingPhysics = requireNamedValue(
-      this.tilemap.objects, 'buildingPhysics');
-    for (const obj of buildingPhysics.objects) {
-      // This is the only way I can find to add a sprite-less body.
-      const fakeSprite = this.add.sprite(
-        obj.x + tileWidth / 2 + this.mapOffsetX,
-        obj.y + tileHeight / 2 + this.mapOffsetY);
-      fakeSprite.width = obj.width;
-      fakeSprite.height = obj.height;
-      fakeSprite.isBuilding = true;
-      fakeSprite.building = obj;
-      fakeSprite.isFriendly = true;
-      // TODO: building physics broken!
-      // this.physics.add.existing(fakeSprite, true); // Doesn't work either
-      this.physics.world.enable(fakeSprite, Physics.Arcade.STATIC_BODY);
-      this.groups.actors.add(fakeSprite, false);
+    const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
+    for (const b of buildings.objects) {
+      const sprite = this.physics.add.staticImage(
+        b.x + this.mapOffsetX, b.y + this.mapOffsetY, b.type);
+      sprite.isFriendly = true;
+      sprite.building = b;
+      sprite.isBuilding = true;
     }
   }
 
