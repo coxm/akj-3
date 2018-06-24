@@ -12,7 +12,7 @@ export class Boot extends Scene {
         data: level0Tilemap,
       });
     }
-    this.load.spritesheet(tilesetName, 'assets/img/apocalypse.png', {
+    this.load.spritesheet(tilesetName, 'assets/img/tileset.png', {
       frameWidth: 16,
       frameHeight: 16,
       spacing: 0,

@@ -73,7 +73,7 @@ export class Level extends Phaser.Scene {
       tileWidth: 16,
       tileHeight: 16,
     });
-    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
+    this.tileset = this.tilemap.addTilesetImage('tileset', tilesetName);
     this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
