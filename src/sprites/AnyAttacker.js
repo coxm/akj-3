@@ -78,6 +78,18 @@ export class AnyAttacker extends GameObjects.Sprite {
     }
   }
 
+  /**
+   * Attack a building
+   */
+  attackBuilding(target) {
+    if (target) {
+      this.target = target;
+    }
+
+    target.health -= this.attackStrength;
+    this.mode = modeAttacking;
+  }
+
   update() {
     this.updateHealthBar();
 
