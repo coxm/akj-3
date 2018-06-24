@@ -12,7 +12,7 @@ export const tileWidth = 16;
 export const tileHeight = 16;
 
 
-export const tilesetName = 'apoc16x16-img';
+export const tilesetName = 'tileset';
 
 
 /** Sprite frames within the tileset. */

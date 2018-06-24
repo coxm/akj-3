@@ -1,0 +1,12 @@
+{ "columns":9,
+ "image":"..\/..\/assets\/img\/tileset.png",
+ "imageheight":288,
+ "imagewidth":288,
+ "margin":0,
+ "name":"tileset",
+ "spacing":0,
+ "tilecount":81,
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset"
+}
