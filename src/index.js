@@ -41,4 +41,5 @@ __DEV__ && Object.assign(window, {
   boot,
   title,
   level: levels[0],
+  __BUILD__: __BUILD__,
 });

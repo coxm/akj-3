@@ -121,8 +121,8 @@ export class Level extends Phaser.Scene {
     for (const key in this.buttons) {
       const button = this.buttons[key];
       button.orgFrame = button.frame.name;
-      button.on('pointerover', function(event) { /* TODO */ }, this);
-      button.on('pointerout', function(event) { /* TODO */ }, this);
+      // button.on('pointerover', function(event) { /* TODO */ }, this);
+      // button.on('pointerout', function(event) { /* TODO */ }, this);
       button.on('pointerdown', function(event) {
         this.setButtonDownState(button, true);
       }, this);
@@ -160,8 +160,37 @@ export class Level extends Phaser.Scene {
     }
   }
 
+  cancelAllModes() {
+    this.cancelUnitOrderMode();
+    this.cancelObjectPlacementMode();
+  }
+
+  onUnitPointerDown(event, unit) {
+    if (event.leftButtonDown()) {
+      this.enterUnitOrderMode(unit, event);
+    }
+  }
+
+  enterUnitOrderMode(unit, event) {
+    this.cancelAllModes();
+    this.orderingUnit = unit;
+    unit.debug = true;
+    // TODO: set cursor?
+    console.log('Entering unit order mode');
+  }
+
+  cancelUnitOrderMode() {
+    if (this.orderingUnit) {
+      this.orderingUnit.debug = false;
+      this.orderingUnit = null;
+    }
+  }
+
+  completeUnitOrder(x, y) {
+  }
+
   enterPlacementMode(id) {
-    this.resetObjectPlacement();
+    this.cancelAllModes();
 
     const woodRequired = woodRequiredForStructure[id];
     if (this.wood < woodRequired) {
@@ -206,10 +235,10 @@ export class Level extends Phaser.Scene {
     sprite.alpha = 0;
     sprite.health = 0;
     this.wood -= woodRequiredForStructure[this.placingObject.id];
-    this.resetObjectPlacement();
+    this.cancelObjectPlacementMode();
   }
 
-  resetObjectPlacement() {
+  cancelObjectPlacementMode() {
     if (this.placingObject) {
       this.placingObject.sprite.active = false;
       this.placingObject.sprite.visible = false;
@@ -345,6 +374,8 @@ export class Level extends Phaser.Scene {
     const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
     this.addSpriteAndCreateBody(sprite);
+    sprite.setInteractive().on(
+      'pointerdown', event => this.onUnitPointerDown(event, unit));
     return sprite;
   }
 
