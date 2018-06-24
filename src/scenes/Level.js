@@ -1,4 +1,4 @@
-import {Scene} from 'phaser';
+import {Physics, Scene} from 'phaser';
 
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
@@ -212,6 +212,21 @@ export class Level extends Phaser.Scene {
     }
 
     this.checkStateAndTriggerEvents();
+    const actors = this.groups.actors.children.entries;
+    const len = actors.length;
+    for (let i = 0; i < len; ++i) {
+      for (let j = i + 1; j < len; ++j) {
+        this.physics.world.collide(
+          actors[i], actors[j], this.onActorCollision, undefined, this);
+      }
+    }
+  }
+
+  onActorCollision(actorA, actorB) {
+    if (actorA.constructor === actorB.constructor) {
+      return;
+    }
+    console.log('collision', actorA.constructor.name, actorB.constructor.name);
   }
 
   checkStateAndTriggerEvents() {
@@ -243,11 +258,11 @@ export class Level extends Phaser.Scene {
     return null;
   }
 
-  spawnAttacker() {
-    const spawn = randElement(this.invaderSpawns);
+  spawnAttacker(spawn = randElement(this.invaderSpawns)) {
     const invader = new Invader(this, spawn.x, spawn.y);
     this.groups.actors.add(invader, true);
     this.physics.add.existing(invader);
+    this.physics.world.enable(invader, Physics.Arcade.DYNAMIC_BODY);
     invader.target = spawn.target;
     return invader;
   }
@@ -265,6 +280,7 @@ export class Level extends Phaser.Scene {
     const sprite = new cls(this, spawn.x, spawn.y);
     this.groups.actors.add(sprite, true);
     this.physics.add.existing(sprite);
+    this.physics.world.enable(sprite, Physics.Arcade.DYNAMIC_BODY);
     return sprite;
   }
 
