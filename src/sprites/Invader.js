@@ -1,7 +1,7 @@
 import {GameObjects} from 'phaser';
 
 import {
-  tilesetName, invaderFrame, invaderSpeed,
+  invaderTilesetName, invaderFrame, invaderSpeed,
   invaderAttackStrength as attackStrength,
   invaderAttackRadius as attackRadius,
 } from '../settings';
@@ -15,7 +15,7 @@ export const modeAttacking = 2;
 
 export class Invader extends GameObjects.Sprite {
   constructor(level, x, y, frameIndex, properties) {
-    super(level, x, y, tilesetName, frameIndex);
+    super(level, x, y, invaderTilesetName, frameIndex);
     this.speed = properties.speed;
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;

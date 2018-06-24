@@ -17,6 +17,11 @@ export class Boot extends Scene {
       frameHeight: 32,
       spacing: 0,
     });
+    this.load.spritesheet('twig-monster', 'assets/img/twig_monster.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      spacing: 0,
+    });
 
     // Load images here. Prefer to import JSON and other text assets into the
     // bundle.

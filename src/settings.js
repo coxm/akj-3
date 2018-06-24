@@ -13,6 +13,7 @@ export const tileHeight = 16;
 
 
 export const tilesetName = 'tileset';
+export const invaderTilesetName = 'twig-monster';
 
 
 /** Sprite frames within the tileset. */
