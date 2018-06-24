@@ -14,6 +14,9 @@ export const tileHeight = 16;
 
 export const tilesetName = 'tileset';
 export const invaderTilesetName = 'twig-monster';
+export const bossTilesetName = 'flower-monster';
+export const farmerTilesetName = 'farmer';
+export const soldierTilesetName = 'farmer';
 
 
 /** Sprite frames within the tileset. */

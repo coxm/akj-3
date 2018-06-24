@@ -1,6 +1,6 @@
 import {Scene, Tilemaps} from 'phaser';
 
-import {tilesetName} from '../settings';
+import {tilesetName, invaderTilesetName, bossTilesetName, farmerTilesetName, soldierTilesetName} from '../settings';
 import level0Tilemap from '../tilemaps/Level0.json';
 
 
@@ -17,7 +17,22 @@ export class Boot extends Scene {
       frameHeight: 32,
       spacing: 0,
     });
-    this.load.spritesheet('twig-monster', 'assets/img/twig_monster.png', {
+    this.load.spritesheet(invaderTilesetName, 'assets/img/twig_monster.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      spacing: 0,
+    });
+    this.load.spritesheet(bossTilesetName, 'assets/img/flower_monster.png', {
+      frameWidth: 64,
+      frameHeight: 64,
+      spacing: 0,
+    });
+    this.load.spritesheet(farmerTilesetName, 'assets/img/farmer.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      spacing: 0,
+    });
+    this.load.spritesheet(soldierTilesetName, 'assets/img/farmer.png', {
       frameWidth: 32,
       frameHeight: 32,
       spacing: 0,
