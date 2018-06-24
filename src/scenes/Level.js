@@ -66,14 +66,14 @@ export class Level extends Phaser.Scene {
   }
 
   createTilemap() {
-    this.mapOffsetX = 264;
-    this.mapOffsetY = 8;
+    this.mapOffsetX = 270;
+    this.mapOffsetY = 16;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 16,
       tileHeight: 16,
     });
-    this.tileset = this.tilemap.addTilesetImage('apoc16x16', tilesetName);
+    this.tileset = this.tilemap.addTilesetImage('tileset', tilesetName);
     this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
