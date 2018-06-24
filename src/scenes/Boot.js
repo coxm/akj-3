@@ -57,6 +57,8 @@ export class Boot extends Scene {
       spacing: 0,
     });
 
+    this.load.audio("intro-theme", ["/assets/sfx/intro-theme.ogg"]);
+
     this.load.on('complete', () => {
       console.log('Loaded');
       this.scene.start(__FIRST_SCENE__);

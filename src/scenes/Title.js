@@ -14,6 +14,9 @@ export class Title extends Scene {
     let gameText = this.add.text(80, 620, 'A game made by @James_Deans_Jeans, @gsamaro, @Kyle3wynn, @toasty and @dollarone' +
     '\n                                for the 3rd Alakajam!', { fontSize: '24px', fill: '#777' });
     let titleText = this.add.text(450, 700, 'Click anywhere to start', { fontSize: '32px', fill: '#777' });
+    this.introMusic = this.sound.add('intro-theme');
+    this.introMusic.play();
+
     titleText.alpha = 0;
       var tween = this.tweens.add({
         targets: titleText,
@@ -21,8 +24,8 @@ export class Title extends Scene {
             alpha: 1
         },
         duration: 3000,
-        yoyo: false,
-        repeat: 0
+        yoyo: true,
+        repeat: -1
     });
 
     this.input.on('pointerdown', function() {
