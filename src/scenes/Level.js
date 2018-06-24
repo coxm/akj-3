@@ -106,6 +106,8 @@ export class Level extends Phaser.Scene {
   }
 
   createUI() {    
+    this.input.mouse.disableContextMenu();
+
     let ui_img = this.add.image(128, 768, 'ui-img');
 //    ui_img.displayHeight = 768;
 
@@ -165,9 +167,25 @@ export class Level extends Phaser.Scene {
     this.cancelObjectPlacementMode();
   }
 
-  onUnitPointerDown(event, unit) {
+  onUnitSelect(event, unit) {
+    console.log('event', window.event = event);
     if (event.leftButtonDown()) {
       this.enterUnitOrderMode(unit, event);
+    }
+    else if (this.orderingUnit) {
+      this.completeUnitOrder(event.pointer.x, event.pointer.y);
+    }
+  }
+
+  onUnitOrderClick(event) {
+    if (event.leftButtonDown()) {
+      this.cancelUnitOrderMode();
+    }
+    else {
+      __DEV__ && console.assert(
+        this.orderingUnit, "Can't order unit: no unit selected!");
+      this.orderingUnit.approachTarget({x: event.worldX, y: event.worldY});
+      event.event.preventDefault();
     }
   }
 
@@ -176,17 +194,17 @@ export class Level extends Phaser.Scene {
     this.orderingUnit = unit;
     unit.debug = true;
     // TODO: set cursor?
-    console.log('Entering unit order mode');
+    __DEV__ && console.log('Entering unit order mode');
+    this.input.on('pointerdown', this.onUnitOrderClick, this);
   }
 
   cancelUnitOrderMode() {
+    __DEV__ && console.log('Exit order mode');
     if (this.orderingUnit) {
       this.orderingUnit.debug = false;
       this.orderingUnit = null;
+      this.input.off('pointerdown', this.onUnitOrderClick, this);
     }
-  }
-
-  completeUnitOrder(x, y) {
   }
 
   enterPlacementMode(id) {
@@ -375,7 +393,7 @@ export class Level extends Phaser.Scene {
     const sprite = new cls(this, spawn.x, spawn.y);
     this.addSpriteAndCreateBody(sprite);
     sprite.setInteractive().on(
-      'pointerdown', event => this.onUnitPointerDown(event, unit));
+      'pointerdown', event => this.onUnitSelect(event, sprite));
     return sprite;
   }
 
