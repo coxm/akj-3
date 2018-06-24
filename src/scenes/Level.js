@@ -365,7 +365,7 @@ export class Level extends Phaser.Scene {
       actorA.attackBuilding(actorB);
     }
     else {
-      actorA.attackTarget(actorB);
+      actorA.attackTarget && actorA.attackTarget(actorB);
     }
   }
 
