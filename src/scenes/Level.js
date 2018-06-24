@@ -77,8 +77,8 @@ export class Level extends Phaser.Scene {
   }
 
   createTilemap() {
-    this.mapOffsetX = 264;
-    this.mapOffsetY = 8;
+    this.mapOffsetX = 270;
+    this.mapOffsetY = 17;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 32,
