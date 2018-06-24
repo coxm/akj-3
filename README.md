@@ -29,4 +29,4 @@ Source files (JS, HTML, CSS) are all in `src/`. In particular CSS files live und
 All scripts and config (e.g. `webpack.config.js`) live under `scripts/`, and some have NPM scripts defined in `package.json`.
 
 ## Licenses
-The `apocalypse.png` tileset (from [here](https://opengameart.org/content/post-apocalyptic-16x16-tileset-update1)) was made available under the [Creative Commons CC-BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/). Everything else is available under the MIT license.
+All code is available under the MIT license (see `CODE_LICENSE`). Other assets are all available under the [Creative Commons CC-BY-SA 3.0 license](https://creativecommons.org/licenses/by-sa/3.0/). Music (`assets/music/*`) Copyright 2018 Gabriel Samaro. Sound effects (`assets/sfx/*`) Copyright 2018 Kyle Wynn. Art (`assets/img/`) Copyright `@James_Deans_Jeans`, except for the `apocalypse.png` tileset (from [here](https://opengameart.org/content/post-apocalyptic-16x16-tileset-update1); also CC_BY_SA 3.0).
