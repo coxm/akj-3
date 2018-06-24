@@ -23,4 +23,5 @@ pngs: $(png_outputs)
 
 $(png_outputs_dir)/%.png: $(png_sources_dir)/%.png
 	mkdir -p "$(@D)"
-	optipng --out "$@" "$+"
+	# optipng --out "$@" "$+"
+	cp "$+" "$@"
