@@ -169,9 +169,6 @@ export class Level extends Phaser.Scene {
     for (const structureId of ['wall', 'tower']) {
       const button = this.buttons[structureId];
       button.on('pointerdown', function() {
-            this.mainMusic.stop();
-            this.mainMusicDramatic.play();
-
         this.enterPlacementMode(structureId);
       }, this);
     }    
@@ -180,9 +177,10 @@ export class Level extends Phaser.Scene {
     
     this.score = new Score();
     this.scoreText = this.add.text(716, 16, 'Score: 0', { fontSize: '32px', fill: '#777' });
-    this.woodText = this.add.text(716, 72, `Wood: ${this.woodRemaining}`, {
+    this.scoreText.visible = false;
+    this.woodText = this.add.text(40, 572, `Wood: ${this.woodRemaining}`, {
       fontSize: '32px',
-      fill: '#777',
+      fill: '#111',
     });
     let wall_cost_img = this.add.image(50, 110, 'tileset');
     wall_cost_img.setFrame(69);
@@ -450,7 +448,7 @@ export class Level extends Phaser.Scene {
       console.log('Insufficient wood for', cls.name);
       return false;
     }
-
+    this.wood -= woodRequired;
     const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
     this.addSpriteAndCreateBody(sprite);

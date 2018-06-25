@@ -38,7 +38,7 @@ export const weedProperties = {
   maxHealth: 20,
 };
 export const twigProperties = {
-  speed: 16,
+  speed: 20,
   attackRadius: tileWidth,
   attackStrength: 8,
   maxHealth: 100,
@@ -47,7 +47,7 @@ export const twigProperties = {
   isFriendly: false,
 };
 export const flowerProperties = {
-  speed: 4,
+  speed: 10,
   attackRadius: tileWidth,
   attackStrength: 30,
   maxHealth: 200,
@@ -56,7 +56,7 @@ export const flowerProperties = {
   isFriendly: false,
 };
 export const soldierProperties = {
-  speed: 16,
+  speed: 32,
   attackRadius: tileWidth,
   attackStrength: 8,
   maxHealth: 100,
@@ -65,7 +65,7 @@ export const soldierProperties = {
   isFriendly: true,
 };
 export const colonistProperties = {
-  speed: 14,
+  speed: 24,
   attackRadius: tileWidth,
   attackStrength: 4,
   maxHealth: 50,

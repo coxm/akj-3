@@ -32,10 +32,12 @@ export class AnyAttacker extends GameObjects.Sprite {
     this.health = this.maxHealth = properties.maxHealth;
     this.mode = modeNone;
     this.isFriendly = properties.isFriendly;
-    const healthBar = this.healthBar = level.add.graphics();
-    healthBar.lastHealth = this.health;
+    this.healthBar = level.add.graphics();
+//    this.healthBar.fillStyle(0x999999, 1);
+//  this.healthBar.fillRect(300, 150, 100, 100);
+    this.healthBar.lastHealth = this.health;
     this.on('destroy', () => { healthBar.destroy(); });
-    this.updateHealthBar();
+    this.updateHealthBar(true);
   }
 
   /**
@@ -107,16 +109,17 @@ export class AnyAttacker extends GameObjects.Sprite {
     }
   }
 
-  updateHealthBar() {
-    this.healthBar.x = this.x;
-    this.healthBar.y = this.y + this.height;
-    if (this.healthBar.lastHealth === this.health) {
+  updateHealthBar(forceUpdate = false) {
+    this.healthBar.x = this.x - this.width/2;
+    this.healthBar.y = this.y - this.height*10 - this.height/2 - 10;
+
+    if (!forceUpdate && this.healthBar.lastHealth === this.health) {
       return;
     }
     const ratio = this.health / this.maxHealth;
     const colour = healthBarColour(ratio);
     this.healthBar.fillStyle(colour, 1);
     this.healthBar.fillRect(
-      0, 10 * this.height, Math.floor(this.width * ratio), 10);
+      0, 10 * this.height, Math.floor(this.width * ratio), 5);
   }
 }
