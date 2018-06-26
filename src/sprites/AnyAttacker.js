@@ -107,19 +107,25 @@ export class AnyAttacker extends GameObjects.Sprite {
     else {
       this.approachTarget();
     }
+    if (this.health<1) {
+      this.destroy();
+    }
   }
 
   updateHealthBar(forceUpdate = false) {
     this.healthBar.x = this.x - this.width/2;
-    this.healthBar.y = this.y - this.height*10 - this.height/2 - 10;
+    this.healthBar.y = this.y - this.height/2 - 10;
 
     if (!forceUpdate && this.healthBar.lastHealth === this.health) {
       return;
     }
     const ratio = this.health / this.maxHealth;
     const colour = healthBarColour(ratio);
-    this.healthBar.fillStyle(colour, 1);
+    this.healthBar.fillStyle(0x000000, 1);
     this.healthBar.fillRect(
-      0, 10 * this.height, Math.floor(this.width * ratio), 5);
+      -1, -1, this.width+2, 7);
+    this.healthBar.fillStyle(0x008800, 1);
+    this.healthBar.fillRect(
+      0, 0, Math.floor(this.width * ratio), 5);
   }
 }
