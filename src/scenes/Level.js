@@ -76,18 +76,19 @@ export class Level extends Phaser.Scene {
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
     this.gameover = false;
-    this.mainMusic = this.sound.add('main-theme');
-    this.mainMusicDramatic = this.sound.add('main-theme-dramatic');
-    this.mainMusicDramatic.on('ended', (sound) => {
+    if (!__MUSIC_DISABLED__) {
+      this.mainMusic = this.sound.add('main-theme');
+      this.mainMusicDramatic = this.sound.add('main-theme-dramatic');
+      this.mainMusicDramatic.on('ended', (sound) => {
         this.playMainMusic();
-    });
+      });
 
-    this.mainMusic.on('ended', (sound) => {
+      this.mainMusic.on('ended', (sound) => {
         this.playMainMusicDramatic();
-    });
+      });
 
-    this.mainMusic.play();
-
+      this.mainMusic.play();
+    }
 
     this.woodRemaining = initialWood;
     this.createTilemap();
