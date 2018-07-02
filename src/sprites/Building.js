@@ -1,7 +1,7 @@
 import {GameObjects} from 'phaser';
 
 import {distance} from '../util';
-
+import {barracksProperties as properties} from '../settings';
 
 export const modeNone = 0;
 export const modeMoving = 1;
@@ -20,8 +20,8 @@ const healthBarColour = ratio => {
  *
  * Extended by most other sprites (friendly or not).
  */
-export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
-  constructor(level, x, y, properties) {
+export class Building extends GameObjects.Sprite {
+  constructor(level, x, y) {
     console.assert(typeof properties.tileset === 'string', 'Invalid tileset');
     console.assert(typeof properties.frame === 'number', 'Invalid frame');
     super(level, x, y, properties.tileset, properties.frameIndex);
@@ -39,13 +39,8 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     this.healthBar.lastHealth = this.health;
     this.on('destroy', () => { this.healthBar.destroy(); });
     this.updateHealthBar(true);
-    this.once = true;
-    this.properties = properties;
-  }
+        this.once = true;
 
-  resize() {
-    this.orgTarget = this.target;
-    this.setSize(this.properties.width, this.properties.height);
   }
 
   /**
@@ -58,8 +53,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     if (target) {
       this.target = target;
     }
-    this.setVelocity(0,0);
-    this.target = new Object({x:256+512,y:360});
+    this.body.setVelocity(0,0);
 
     const signX = Math.sign(this.target.x - this.x);
     const signY = Math.sign(this.target.y - this.y);
@@ -68,24 +62,24 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
   //        this,
     //      this.level.groups.actors);
 //    console.log(this.body.wasTouching.down || this.body.touching.down);
-
-//super.setVelocity(this.speed * signX);
-//this.setVelocityY(this.speed * signY);
-
-//console.log(signX + " / " + signY + " : " + this.body.touching.left);
-    if (!(this.body.touching.down) && signY>0) {
-      this.setVelocityY(this.speed * signY);
+console.log(signX + " / " + signY + " : " + this.body.touching.left);
+    if (!(this.body.wasTouching.down || this.body.touching.down) && signY>0) {
+      this.body.velocity.y = this.speed * signY;
     }
-
-    if (!(this.body.touching.up) && signY<0) {
-      this.setVelocityY(this.speed * signY);
+    if (!(this.body.wasTouching.up || this.body.touching.up) && signY<0) {
+      this.body.velocity.y = this.speed * signY;
     }
-    if (!(this.body.touching.left) && signX<0) {
-      this.setVelocityX(this.speed * signX);
+    if (!(this.body.wasTouching.left || this.body.touching.left) && signX<0) {
+      this.body.velocity.x = this.speed * signX;
     }
-    if (!(this.body.touching.right) && signX>0) {
-      this.setVelocityX(this.speed * signX);
+    if (!(this.body.wasTouching.left || this.body.touching.right) && signX>0) {
+      this.body.velocity.x = this.speed * signX;
     }
+    if (false) {
+    this.body.setVelocity(
+      Math.floor(this.speed * signX),
+      Math.floor(this.speed * signY));
+  }
     this.mode = modeMoving;
     this.once = false;
   }
@@ -107,21 +101,12 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
 
     // TODO: play an animation.
     const dist = distance(this.x, this.y, this.target.x, this.target.y);
-    if (this.level.step%100==0) { //|| dist < this.attackRadius) {
+    if (dist < this.attackRadius) {
       this.target.health -= this.attackStrength;
       this.mode = modeAttacking;
-     // this.target.updateHealthBar();
     }
     else {
       this.mode = modeMoving;
-    }
-    if (this.target.health < 1) {
-       this.mode = modeMoving;
-       let deadBuilding = this.target;
-       this.target = null;
-       deadBuilding.destroy();
-       this.mode == modeMoving;
-       this.target = this.orgTarget;
     }
   }
 
@@ -137,7 +122,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     this.mode = modeAttacking;
   }
 
-  update(step) {
+  update() {
     this.updateHealthBar();
 
     if (!this.target) {
@@ -146,7 +131,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     }
 
     const dist = distance(this.x, this.y, this.target.x, this.target.y);
-    if (this.mode==modeAttacking || dist < this.attackRadius) {
+    if (dist < this.attackRadius) {
       this.attackTarget();
     }
     else {

@@ -97,9 +97,9 @@ export class Level extends Phaser.Scene {
     this.createUI();
 
     this.randomGen = new Phaser.Math.RandomDataGenerator(2);
-    this.twig = new Twig(this,0,0,'twig-monster');
-    this.physics.world.enable(this.twig);
-    this.groups.actors.add(this.twig);
+//    this.twig = new Twig(this,0,0,'twig-monster');
+  //  this.physics.world.enable(this.twig);
+    //this.groups.actors.add(this.twig);
 
   }
 
@@ -121,8 +121,10 @@ export class Level extends Phaser.Scene {
   createActors() {
     this.groups = {
       placement: this.add.group(),
-      actors: this.add.group(),
+      invaders: this.add.group(),
       assembling: this.add.group(),
+      friendlies: this.add.group(),
+      buildings: this.add.group(),
     };
 
     this.targetLayer = this.tilemap.objects.find(
@@ -133,31 +135,32 @@ export class Level extends Phaser.Scene {
 
     // TODO create building obj so they can have health bars
 
-this.buildings = this.add.group();
-
     const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
     for (const b of buildings.objects) {
-      
+     /* 
       const sprite = this.physics.add.staticSprite(
         b.x + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight,
         b.type);
-        /*
+        */
         const sprite = new Building(this, b.x + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight,
-        barracksProperties);*/
+        barracksProperties);
       sprite.isFriendly = true;
       sprite.building = b;
       sprite.isBuilding = true;
       this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
       //sprite.body.immovable = true;
-      this.groups.actors.add(sprite);
+      this.groups.buildings.add(sprite, true);
     
-      this.buildings.add(sprite);
     }
-    this.barracks = this.physics.add.sprite(0,0,"tileset");
+    //this.barracks = this.physics.add.sprite(0,0,"tileset");
      //this.physics.add.collider(this.groups.actors, this.buildings);
-     this.physics.add.collider(this.groups.actors, this.groups.actors);
+     this.physics.add.overlap(this.groups.invaders, this.groups.buildings, this.attackBuilding, null, this);
+     this.physics.add.collider(this.groups.invaders, this.groups.invaders);
+     this.physics.add.overlap(this.groups.invaders, this.groups.friendlies, this.attackFriendly, null, this);
+     this.physics.add.collider(this.groups.friendlies, this.groups.buildings);
+     this.physics.add.collider(this.groups.friendlies, this.groups.friendlies);
 //   this.physics.add.collider(
   //    this.groups.actors,
     //  this.groups.actors,
@@ -357,13 +360,19 @@ this.buildings = this.add.group();
       this.placingObject.sprite.setPosition(x, y);
     }
 
-    for (const actor of this.groups.actors.children.entries) {
-      actor.update(time, delta);
+    for (const actor of this.groups.invaders.children.entries) {
+      actor.update(this.step);
+    }
+    for (const actor of this.groups.friendlies.children.entries) {
+      actor.update(this.step);
+    }
+    for (const actor of this.groups.buildings.children.entries) {
+      actor.update(this.step);
     }
 
     this.checkStateAndTriggerEvents();
-    const actors = this.groups.actors.children.entries;
-    const len = actors.length;
+   // const actors = this.groups.actors.children.entries;
+    //const len = actors.length;
    //// for (let i = 0; i < len; ++i) {
     //  for (let j = i + 1; j < len; ++j) {
 //          this.onActorCollision, // Collision callback.
@@ -433,6 +442,16 @@ this.buildings = this.add.group();
     }
   }
 
+  attackBuilding(invader, building) {
+    invader.stop();
+    invader.attackBuilding(building);
+  }
+  attackFriendly(invader, friendly) {
+    invader.stop();
+    invader.attackBuilding(friendly);
+    friendly.stop();
+    friendly.attackBuilding(invader);
+  }
   checkStateAndTriggerEvents() {
     if (this.step % 100 == 0) {
       this.state++;
@@ -463,19 +482,35 @@ this.buildings = this.add.group();
    * @returns {Phaser.GameObjects.Sprite | null}
    */
   getObjectInTile(tileX, tileY) {
-    for (const sprite of this.groups.actors.children.entries) {
+    for (const sprite of this.groups.friendlies.children.entries) {
       const [spriteTileX, spriteTileY] =
         tilePositionOfPixels(sprite.x, sprite.y);
       if (spriteTileX === tileX && spriteTileY === tileY) {
         return sprite;
       }
     }
+    for (const sprite of this.groups.invaders.children.entries) {
+      const [spriteTileX, spriteTileY] =
+        tilePositionOfPixels(sprite.x, sprite.y);
+      if (spriteTileX === tileX && spriteTileY === tileY) {
+        return sprite;
+      }
+    }
+    for (const sprite of this.groups.buildings.children.entries) {
+      const [spriteTileX, spriteTileY] =
+        tilePositionOfPixels(sprite.x, sprite.y);
+      if (spriteTileX === tileX && spriteTileY === tileY) {
+        return sprite;
+      }
+    }
+
     return null;
   }
 
-  addSpriteAndCreateBody(sprite, bodyType = Physics.Arcade.DYNAMIC_BODY) {
+  addSpriteAndCreateBody(sprite, group, bodyType = Physics.Arcade.DYNAMIC_BODY) {
     this.physics.world.enable(sprite, bodyType);
-    this.groups.actors.add(sprite, true);
+    group.add(sprite, true);
+    sprite.resize();
     //this.physics.add.existing(sprite);
     //sprite.setActive(); // oooh
   }
@@ -483,8 +518,8 @@ this.buildings = this.add.group();
   spawnAttacker(
     spawn = randElement(this.invaderSpawns), attackerClass = Math.random() > 0.8 ? Flower : Twig) {
     const invader = new attackerClass(this, spawn.x, spawn.y, spawn.target);
-    this.addSpriteAndCreateBody(invader);
-    invader.approachTarget(null);
+    this.addSpriteAndCreateBody(invader, this.groups.invaders);
+    invader.approachTarget(spawn.target);
 
     return invader;
   }
@@ -507,7 +542,7 @@ this.buildings = this.add.group();
     this.wood -= woodRequired;
     const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
-    this.addSpriteAndCreateBody(sprite);
+    this.addSpriteAndCreateBody(sprite, this.groups.friendlies);
     sprite.setInteractive().on(
       'pointerdown', event => this.onUnitSelect(event, sprite));
     return sprite;

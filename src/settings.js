@@ -41,47 +41,55 @@ export const twigProperties = {
   speed: 40,
   attackRadius: tileWidth*2+2,
   attackStrength: 1,
-  maxHealth: 100,
+  maxHealth: 30,
   tileset: 'twig-monster',
   frame: 0,
   isFriendly: false,
+  height: 26,
+  width: 26,
 };
 export const flowerProperties = {
   speed: 30,
   attackRadius: tileWidth+2,
-  attackStrength: 30,
+  attackStrength: 3,
   maxHealth: 200,
   tileset: 'flower-monster',
   frame: 0,
   isFriendly: false,
+  height: 60,
+  width: 40,
 };
 export const soldierProperties = {
   speed: 42,
   attackRadius: tileWidth*2+2,
-  attackStrength: 2,
-  maxHealth: 100,
+  attackStrength: 5,
+  maxHealth: 150,
   tileset: 'soldier',
   frame: 0,
   isFriendly: true,
+  height: 28,
+  width: 24,
 };
 export const colonistProperties = {
   speed: 32,
   attackRadius: tileWidth*2+2,
-  attackStrength: 1,
-  maxHealth: 50,
+  attackStrength: 2,
+  maxHealth: 100,
   tileset: 'farmer',
   frame: 0,
   isFriendly: true,
+  height: 28,
+  width: 16,
 };
 //Buildings
 export const barracksProperties = {
   speed: 0,
   attackRadius: 0,
   attackStrength: 0,
-  maxHealth: 200,
+  maxHealth: 400,
   frame: 0,
   isFriendly: true,
-  tileset: tilesetName,
+  tileset: 'farm',
 };
 
 
