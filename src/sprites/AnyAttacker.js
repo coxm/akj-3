@@ -20,7 +20,7 @@ const healthBarColour = ratio => {
  *
  * Extended by most other sprites (friendly or not).
  */
-export class AnyAttacker extends GameObjects.Sprite {
+export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
   constructor(level, x, y, properties) {
     console.assert(typeof properties.tileset === 'string', 'Invalid tileset');
     console.assert(typeof properties.frame === 'number', 'Invalid frame');
@@ -33,11 +33,15 @@ export class AnyAttacker extends GameObjects.Sprite {
     this.mode = modeNone;
     this.isFriendly = properties.isFriendly;
     this.healthBar = level.add.graphics();
+    this.level = level;
 //    this.healthBar.fillStyle(0x999999, 1);
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;
-    this.on('destroy', () => { healthBar.destroy(); });
+    this.on('destroy', () => { this.healthBar.destroy(); });
     this.updateHealthBar(true);
+        this.once = true;
+
+
   }
 
   /**
@@ -50,14 +54,47 @@ export class AnyAttacker extends GameObjects.Sprite {
     if (target) {
       this.target = target;
     }
+    this.body.setVelocity(0,0);
+
     const signX = Math.sign(this.target.x - this.x);
     const signY = Math.sign(this.target.y - this.y);
-    this.body.setVelocity(
+
+//    let collision = this.level.physics.world.collide(
+  //        this,
+    //      this.level.groups.actors);
+//    console.log(this.body.wasTouching.down || this.body.touching.down);
+
+//super.setVelocity(this.speed * signX);
+//this.setVelocityY(this.speed * signY);
+
+//console.log(signX + " / " + signY + " : " + this.body.touching.left);
+    if (!(this.body.touching.down) && signY>0) {
+      this.body.velocity.y = this.speed * signY;
+    }
+    if (!(this.body.touching.up) && signY<0) {
+      this.body.velocity.y = this.speed * signY;
+    }
+    if (!(this.body.touching.left) && signX<0) {
+      this.body.velocity.x = this.speed * signX;
+    }
+    if (!(this.body.touching.right) && signX>0) {
+      this.body.velocity.x = this.speed * signX;
+    }
+  //}
+    if (false) {
+
+    this.setVelocity(
       Math.floor(this.speed * signX),
       Math.floor(this.speed * signY));
+  }
     this.mode = modeMoving;
+    this.once = false;
   }
 
+  stop() {
+    this.body.setVelocity(0,0);
+
+  }
   /**
    * Attack a target.
    *
@@ -105,7 +142,9 @@ export class AnyAttacker extends GameObjects.Sprite {
       this.attackTarget();
     }
     else {
-      this.approachTarget();
+      if (this.body.velocity.x < 0.1 && this.body.velocity.y < 0.1) {
+        this.approachTarget();
+      }
     }
     if (this.health<1) {
       this.destroy();

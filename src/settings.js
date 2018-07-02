@@ -33,22 +33,22 @@ export const wallMaxHealth = 120;
 
 /** Attacker properties. */
 export const weedProperties = {
-  attackRadius: tileWidth,
+  attackRadius: tileWidth+1,
   attackStrength: 5,
   maxHealth: 20,
 };
 export const twigProperties = {
-  speed: 20,
-  attackRadius: tileWidth,
-  attackStrength: 8,
+  speed: 40,
+  attackRadius: tileWidth*2+2,
+  attackStrength: 1,
   maxHealth: 100,
   tileset: 'twig-monster',
   frame: 0,
   isFriendly: false,
 };
 export const flowerProperties = {
-  speed: 10,
-  attackRadius: tileWidth,
+  speed: 30,
+  attackRadius: tileWidth+2,
   attackStrength: 30,
   maxHealth: 200,
   tileset: 'flower-monster',
@@ -56,23 +56,34 @@ export const flowerProperties = {
   isFriendly: false,
 };
 export const soldierProperties = {
-  speed: 32,
-  attackRadius: tileWidth,
-  attackStrength: 8,
+  speed: 42,
+  attackRadius: tileWidth*2+2,
+  attackStrength: 2,
   maxHealth: 100,
   tileset: 'soldier',
   frame: 0,
   isFriendly: true,
 };
 export const colonistProperties = {
-  speed: 24,
-  attackRadius: tileWidth,
-  attackStrength: 4,
+  speed: 32,
+  attackRadius: tileWidth*2+2,
+  attackStrength: 1,
   maxHealth: 50,
   tileset: 'farmer',
   frame: 0,
   isFriendly: true,
 };
+//Buildings
+export const barracksProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 200,
+  frame: 0,
+  isFriendly: true,
+  tileset: tilesetName,
+};
+
 
 export const woodRequiredForUnit = {
   Soldier: 30,

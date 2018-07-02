@@ -7,10 +7,11 @@ import {
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
-  Colonist, Ditch, Flower, Invader, Soldier, Tower, Twig, Wall,
+  Colonist, Ditch, Flower, Invader, Soldier, Tower, Twig, Wall, Building
 } from '../sprites/index';
 import {Score} from '../var/index';
 
+import {barracksProperties} from '../settings';
 
 const placementModeInfo = {
   ditch: {
@@ -74,7 +75,7 @@ export class Level extends Phaser.Scene {
 
   create() {
     this.state = 1; // state is the current "wave"/event
-    this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
+    this.step = 9991; // step is just a counter incremented by update. states are triggered by step numbers
     this.gameover = false;
     this.mainMusic = this.sound.add('main-theme');
     this.mainMusicDramatic = this.sound.add('main-theme-dramatic');
@@ -94,6 +95,12 @@ export class Level extends Phaser.Scene {
     this.createActors();
     this.createInput();
     this.createUI();
+
+    this.randomGen = new Phaser.Math.RandomDataGenerator(2);
+    this.twig = new Twig(this,0,0,'twig-monster');
+    this.physics.world.enable(this.twig);
+    this.groups.actors.add(this.twig);
+
   }
 
   createTilemap() {
@@ -124,18 +131,40 @@ export class Level extends Phaser.Scene {
     this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
 
+    // TODO create building obj so they can have health bars
+
+this.buildings = this.add.group();
+
     const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
     for (const b of buildings.objects) {
+      
       const sprite = this.physics.add.staticSprite(
         b.x + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight,
         b.type);
+        /*
+        const sprite = new Building(this, b.x + this.mapOffsetX + 2 * tileWidth,
+        b.y + this.mapOffsetY - 2 * tileHeight,
+        barracksProperties);*/
       sprite.isFriendly = true;
       sprite.building = b;
       sprite.isBuilding = true;
       this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
+      //sprite.body.immovable = true;
       this.groups.actors.add(sprite);
+    
+      this.buildings.add(sprite);
     }
+    this.barracks = this.physics.add.sprite(0,0,"tileset");
+     //this.physics.add.collider(this.groups.actors, this.buildings);
+     this.physics.add.collider(this.groups.actors, this.groups.actors);
+//   this.physics.add.collider(
+  //    this.groups.actors,
+    //  this.groups.actors,
+      //this.onActorCollision
+   // );
+     //this.physics.add.overlap(this.groups.actors, this.groups.actors, this.onActorCollision, null, this);
+
   }
 
   createUI() {    
@@ -335,17 +364,14 @@ export class Level extends Phaser.Scene {
     this.checkStateAndTriggerEvents();
     const actors = this.groups.actors.children.entries;
     const len = actors.length;
-    for (let i = 0; i < len; ++i) {
-      for (let j = i + 1; j < len; ++j) {
-        this.physics.world.collide(
-          actors[i],
-          actors[j],
-          this.onActorCollision, // Collision callback.
-          () => true, // Process callback. 
-          this // Callback context.
-        );
-      }
-    }
+   //// for (let i = 0; i < len; ++i) {
+    //  for (let j = i + 1; j < len; ++j) {
+//          this.onActorCollision, // Collision callback.
+  //  //      () => true, // Process callback. 
+        //  this // Callback context.
+    //    );
+    ////  //}
+    //}
 
     // For each structure being assembled, increment its health. If the
     // structure has reached full health, create a proper actor for it in that
@@ -366,7 +392,23 @@ export class Level extends Phaser.Scene {
   }
 
   onActorCollision(actorA, actorB) {
+    //console.log(actorB);
+    //({x:0, y:0});
+    //if (actorA.building != true) {
+      actorA.body.velocity.x = 0;
+      actorA.body.velocity.y = 0;
+   // }
+    //if (actorB.building != true) {
+      actorB.body.velocity.x = 0;
+      actorB.body.velocity.y = 0;
+      console.log("immovable");
+    // actorA.body.immovable = true;
+     // actorB.body.immovable = true;
+    
+    // dont collide with self
     if (actorA.constructor === actorB.constructor) {
+      // not ever being triggered
+      console.log("dont collide with self");
       return;
     }
 
@@ -376,7 +418,7 @@ export class Level extends Phaser.Scene {
     }
 
     if (!actorA.isFriendly){ 
-      [actorA, actorB] = [actorB, actorA];
+    //  [actorA, actorB] = [actorB, actorA];
     }
     // Now actorA is the AI.
 
@@ -385,15 +427,28 @@ export class Level extends Phaser.Scene {
       actorA.attackBuilding(actorB);
     }
     else {
-      actorA.attackTarget && actorA.attackTarget(actorB);
+      //actorA.stop();
+      //actorB.stop();
+      //actorA.attackTarget && actorA.attackTarget(actorB);
     }
   }
 
   checkStateAndTriggerEvents() {
-    if (this.step % 1000 == 0) {
+    if (this.step % 100 == 0) {
       this.state++;
-      for (let i=0; i<this.state; i++) {
+      for (let i=0; i<1; i++) {
         this.spawnAttacker();
+        if(false){
+          let x = this.randomGen.pick([0,1024])+256;
+          let y = this.randomGen.pick([0,720]);
+          let player = this.physics.add.sprite(x, y, 'twig-monster');
+          //player.setVelocity(-60,-60);
+          let angle = this.randomGen.angle();
+          let speed = 50;
+          player.setVelocityX(speed * Math.cos(angle));
+          player.setVelocityY(speed * Math.sin(angle));
+          this.groups.actors.add(player);
+        }
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
       }
     }
@@ -419,17 +474,18 @@ export class Level extends Phaser.Scene {
   }
 
   addSpriteAndCreateBody(sprite, bodyType = Physics.Arcade.DYNAMIC_BODY) {
-    this.groups.actors.add(sprite, true);
-    this.physics.add.existing(sprite);
     this.physics.world.enable(sprite, bodyType);
+    this.groups.actors.add(sprite, true);
+    //this.physics.add.existing(sprite);
+    //sprite.setActive(); // oooh
   }
 
   spawnAttacker(
-    spawn = randElement(this.invaderSpawns),
-    attackerClass = Math.random() > 0.5 ? Flower : Twig
-  ) {
+    spawn = randElement(this.invaderSpawns), attackerClass = Math.random() > 0.8 ? Flower : Twig) {
     const invader = new attackerClass(this, spawn.x, spawn.y, spawn.target);
     this.addSpriteAndCreateBody(invader);
+    invader.approachTarget(null);
+
     return invader;
   }
 
