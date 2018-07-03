@@ -11,7 +11,8 @@ import {
 } from '../sprites/index';
 import {Score} from '../var/index';
 
-import {barracksProperties} from '../settings';
+import {barracksProperties, wallProperties, towerProperties,
+  townHouseProperties, townHallProperties, farmProperties} from '../settings';
 
 const placementModeInfo = {
   ditch: {
@@ -97,10 +98,6 @@ export class Level extends Phaser.Scene {
     this.createUI();
 
     this.randomGen = new Phaser.Math.RandomDataGenerator(2);
-//    this.twig = new Twig(this,0,0,'twig-monster');
-  //  this.physics.world.enable(this.twig);
-    //this.groups.actors.add(this.twig);
-
   }
 
   createTilemap() {
@@ -137,6 +134,14 @@ export class Level extends Phaser.Scene {
 
     const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
     for (const b of buildings.objects) {
+      console.log(b.type);
+      let properties = null;
+      switch(b.type) {
+        case "Barracks": properties = barracksProperties; break;
+        case "TownHall": properties = townHallProperties; break;
+        case "FarmHouse": properties = farmProperties; break;
+        case "PlainBuilding": properties = townHouseProperties; break;
+      }
      /* 
       const sprite = this.physics.add.staticSprite(
         b.x + this.mapOffsetX + 2 * tileWidth,
@@ -145,7 +150,7 @@ export class Level extends Phaser.Scene {
         */
         const sprite = new Building(this, b.x + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight,
-        barracksProperties);
+        properties);
       sprite.isFriendly = true;
       sprite.building = b;
       sprite.isBuilding = true;
@@ -227,6 +232,9 @@ export class Level extends Phaser.Scene {
     let farmer_cost_img = this.add.image(178, 302, 'tileset');
     farmer_cost_img.setFrame(69);
     let farmer_cost_label = this.add.text(198, 290, '' + woodRequiredForUnit["Colonist"], { fontSize: '24px', fill: '#111' });
+
+    this.towerPlacementPointer = this.add.sprite(-128, -108, 'tower');
+    placementModeInfo.tower.sprite = this.towerPlacementPointer;
   }
 
   createInput() {
@@ -327,7 +335,16 @@ export class Level extends Phaser.Scene {
     this.input.off('pointerdown', this.attemptObjectPlacement, this);
     const createSprite = placementModeInfo[this.placingObject.id].create;
     const [x, y] = pixelTopLeftOfTile(tileX, tileY);
-    const sprite = createSprite(this, x, y);
+    //const sprite = createSprite(this, x, y)
+    let properties = null;
+    if (this.placingObject.id === "wall") {
+      properties = wallProperties;
+    }
+    else if(this.placingObject.id === "tower") {
+      properties = towerProperties;
+    }
+    const sprite = new Building(this, x, y, properties);
+
     this.groups.assembling.add(sprite, true);
     sprite.alpha = 0;
     sprite.health = 0;
@@ -341,6 +358,8 @@ export class Level extends Phaser.Scene {
       this.placingObject.sprite.visible = false;
       this.placingObject = null;
     }
+    this.placingObject = null;
+
   }
 
   setButtonDownState(button, down) {
@@ -392,7 +411,7 @@ export class Level extends Phaser.Scene {
         struct.alpha = 1;
         this.groups.assembling.remove(struct);
         this.physics.world.enable(struct, Physics.Arcade.STATIC_BODY);
-        this.groups.actors.add(struct);
+        this.groups.buildings.add(struct);
       }
       else {
         struct.alpha = struct.health / struct.maxHealth;

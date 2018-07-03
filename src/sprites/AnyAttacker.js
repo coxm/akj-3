@@ -107,13 +107,13 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
 
     // TODO: play an animation.
     const dist = distance(this.x, this.y, this.target.x, this.target.y);
-    if (this.level.step%100==0) { //|| dist < this.attackRadius) {
+    if (this.level.step%50==0) { //|| dist < this.attackRadius) {
       this.target.health -= this.attackStrength;
       this.mode = modeAttacking;
      // this.target.updateHealthBar();
     }
     else {
-      this.mode = modeMoving;
+     // this.mode = modeMoving;
     }
     if (this.target.health < 1) {
        this.mode = modeMoving;
@@ -132,9 +132,10 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     if (target) {
       this.target = target;
     }
-
-    target.health -= this.attackStrength;
-    this.mode = modeAttacking;
+    if (this.level.step%50==0) {
+      target.health -= this.attackStrength;
+      this.mode = modeAttacking;
+    }
   }
 
   update(step) {

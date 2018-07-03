@@ -50,10 +50,17 @@ export class Boot extends Scene {
     // bundle.
     this.load.image('ui-img', 'assets/img/ui.png');
     this.load.image('title', 'assets/img/title_screen_the_growth.png');
-    this.load.image('Barracks', 'assets/img/buildings/SpecialBuilding.png');
+    this.load.image('barracks', 'assets/img/buildings/farm_building.png');
     this.load.image('farm', 'assets/img/buildings/farm_building.png');
-    this.load.image('PlainBuilding', 'assets/img/buildings/plain.png');
-    this.load.image('TownHall', 'assets/img/buildings/town_hall_big.png');
+    this.load.image('townHouse', 'assets/img/buildings/plain.png');
+    this.load.image('townHall', 'assets/img/buildings/town_hall.png');
+    this.load.image('tower', 'assets/img/buildings/watch_tower_2x2.png');
+
+    this.load.spritesheet('wall', 'assets/img/buildings/bambo_fence_thick.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      spacing: 0,
+    });
 
     this.load.spritesheet('ui', 'assets/img/ui.png', {
       frameWidth: 128,

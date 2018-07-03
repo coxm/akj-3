@@ -1,7 +1,6 @@
 import {GameObjects} from 'phaser';
 
 import {distance} from '../util';
-import {barracksProperties as properties} from '../settings';
 
 export const modeNone = 0;
 export const modeMoving = 1;
@@ -21,7 +20,7 @@ const healthBarColour = ratio => {
  * Extended by most other sprites (friendly or not).
  */
 export class Building extends GameObjects.Sprite {
-  constructor(level, x, y) {
+  constructor(level, x, y, properties) {
     console.assert(typeof properties.tileset === 'string', 'Invalid tileset');
     console.assert(typeof properties.frame === 'number', 'Invalid frame');
     super(level, x, y, properties.tileset, properties.frameIndex);
@@ -34,6 +33,7 @@ export class Building extends GameObjects.Sprite {
     this.isFriendly = properties.isFriendly;
     this.healthBar = level.add.graphics();
     this.level = level;
+    this.setFrame(properties.frame);
 //    this.healthBar.fillStyle(0x999999, 1);
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;

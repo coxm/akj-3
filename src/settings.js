@@ -33,15 +33,21 @@ export const wallMaxHealth = 120;
 
 /** Attacker properties. */
 export const weedProperties = {
-  attackRadius: tileWidth+1,
-  attackStrength: 5,
-  maxHealth: 20,
+  speed: 0,
+  attackRadius: tileWidth*2+2,
+  attackStrength: 1,
+  maxHealth: 10,
+  tileset: 'weed-monster',
+  frame: 0,
+  isFriendly: false,
+  height: 32,
+  width: 32,
 };
 export const twigProperties = {
   speed: 40,
   attackRadius: tileWidth*2+2,
   attackStrength: 1,
-  maxHealth: 30,
+  maxHealth: 50,
   tileset: 'twig-monster',
   frame: 0,
   isFriendly: false,
@@ -62,7 +68,7 @@ export const flowerProperties = {
 export const soldierProperties = {
   speed: 42,
   attackRadius: tileWidth*2+2,
-  attackStrength: 5,
+  attackStrength: 4,
   maxHealth: 150,
   tileset: 'soldier',
   frame: 0,
@@ -89,7 +95,52 @@ export const barracksProperties = {
   maxHealth: 400,
   frame: 0,
   isFriendly: true,
+  tileset: 'barracks',
+};
+export const farmProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 300,
+  frame: 0,
+  isFriendly: true,
   tileset: 'farm',
+};
+export const townHallProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 1000,
+  frame: 0,
+  isFriendly: true,
+  tileset: 'townHall',
+};
+export const townHouseProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 300,
+  frame: 0,
+  isFriendly: true,
+  tileset: 'townHouse',
+};
+export const wallProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 100,
+  frame: 1,
+  isFriendly: true,
+  tileset: 'wall',
+};
+export const towerProperties = {
+  speed: 0,
+  attackRadius: 128,
+  attackStrength: 3,
+  maxHealth: 150,
+  frame: 1,
+  isFriendly: true,
+  tileset: 'tower',
 };
 
 
