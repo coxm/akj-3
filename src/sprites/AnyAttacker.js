@@ -26,6 +26,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     console.assert(typeof properties.frame === 'number', 'Invalid frame');
     super(level, x, y, properties.tileset, properties.frameIndex);
     this.speed = properties.speed;
+    this.tileset = properties.tileset;
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;
     this.attackCreepStrength = properties.attackCreepStrength;
@@ -92,8 +93,9 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
   }
 
   stop() {
-    this.body.setVelocity(0,0);
-
+    if (this.alive) {
+      this.setVelocity(0,0);
+    }
   }
   /**
    * Attack a target.
@@ -163,9 +165,9 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
       this.attackTarget();
     }
     else {
-      if (this.body.velocity.x < 0.1 && this.body.velocity.y < 0.1) {
+     // if (this.body.velocity.x < 0.1 && this.body.velocity.y < 0.1) {
         this.approachTarget();
-      }
+    //  }
     }
     if (this.health<1) {
       this.destroy();

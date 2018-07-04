@@ -19,11 +19,12 @@ const healthBarColour = ratio => {
  *
  * Extended by most other sprites (friendly or not).
  */
-export class Building extends GameObjects.Sprite {
+export class Building extends Phaser.Physics.Arcade.Sprite { // TODO what?
   constructor(level, x, y, properties) {
     console.assert(typeof properties.tileset === 'string', 'Invalid tileset');
     console.assert(typeof properties.frame === 'number', 'Invalid frame');
     super(level, x, y, properties.tileset, properties.frameIndex);
+    this.tileset = properties.tileset;
     this.speed = properties.speed;
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;
@@ -40,6 +41,14 @@ export class Building extends GameObjects.Sprite {
     this.on('destroy', () => { this.healthBar.destroy(); });
     this.updateHealthBar(true);
         this.once = true;
+
+    if (properties.tileset=== "wall") {
+      this.wallTop = level.add.sprite(x,y-32,properties.tileset);
+      this.wallTop.setDepth(10);
+      this.wallTop.setFrame(0);
+      this.on('destroy', () => { this.wallTop.destroy(); });
+// animate: struct.alpha = struct.health / struct.maxHealth; ehh
+    }
 
   }
 
@@ -85,7 +94,7 @@ console.log(signX + " / " + signY + " : " + this.body.touching.left);
   }
 
   stop() {
-    this.body.setVelocity(0,0);
+    this.setVelocity(0,0);
 
   }
   /**

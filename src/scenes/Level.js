@@ -156,11 +156,21 @@ export class Level extends Phaser.Scene {
       sprite.building = b;
       sprite.isBuilding = true;
       this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
+      //sprite.immovable = true;
+      sprite.body.immovable = true;
       if (b.type=="TownHall") {
         sprite.body.setOffset(0,32);
         sprite.body.setSize(190,128,false);
         this.townhall=sprite;
         this.townhall.on('destroy', this.endGame, this);
+        let townHallTop1 = this.add.sprite(b.x - 16 + this.mapOffsetX + 2 * tileWidth,
+        b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
+        townHallTop1.setFrame(110);
+        townHallTop1.setDepth(98);
+        let townHallTop2 = this.add.sprite(b.x + 16 + this.mapOffsetX + 2 * tileWidth,
+        b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
+        townHallTop2.setFrame(111);
+        townHallTop2.setDepth(98);
         
        }
       //sprite.body.immovable = true;
@@ -169,12 +179,12 @@ export class Level extends Phaser.Scene {
     }
     //this.barracks = this.physics.add.sprite(0,0,"tileset");
      //this.physics.add.collider(this.groups.actors, this.buildings);
-     this.physics.add.overlap(this.groups.invaders, this.groups.friendlies, this.attackFriendly, null, this);
-     this.physics.add.overlap(this.groups.invaders, this.groups.buildings, this.attackBuilding, null, this);
-     this.physics.add.overlap(this.groups.creep, this.groups.buildings, this.attackBuilding, null, this);
-     this.physics.add.overlap(this.groups.creep, this.groups.friendlies, this.attackFriendly, null, this);
+     this.physics.add.collider(this.groups.invaders, this.groups.friendlies, this.attackFriendly, null, this);
+     this.physics.add.collider(this.groups.invaders, this.groups.buildings, this.attackBuilding, null, this);
+     this.physics.add.collider(this.groups.creep, this.groups.buildings, this.attackBuilding, null, this);
+     this.physics.add.collider(this.groups.creep, this.groups.friendlies, this.attackFriendly, null, this);
      this.physics.add.collider(this.groups.invaders, this.groups.invaders);
-     this.physics.add.collider(this.groups.invaders, this.groups.creep);
+    //this.physics.add.collider(this.groups.invaders, this.groups.creep); // nah just walk over
      this.physics.add.collider(this.groups.friendlies, this.groups.buildings);
      this.physics.add.collider(this.groups.friendlies, this.groups.friendlies);
 //   this.physics.add.collider(
@@ -429,6 +439,9 @@ export class Level extends Phaser.Scene {
       }
       else {
         struct.alpha = struct.health / struct.maxHealth;
+        if (struct.tileset=="wall") {
+          struct.wallTop.alpha = struct.alpha;
+        }
       }
     }
   }
@@ -626,6 +639,7 @@ export class Level extends Phaser.Scene {
     let graphics = this.add.graphics();
     graphics.fillRect(0, 0, gameWidth, gameHeight);
     graphics.setAlpha(0);
+    graphics.setDepth(100);
     var tween = this.tweens.add({
         targets: graphics,
         props: {
@@ -638,12 +652,14 @@ export class Level extends Phaser.Scene {
     let gameoverScreen = this.add.graphics();
     gameoverScreen.fillStyle(0x999999, 1);
     gameoverScreen.fillRect(300, 150, gameWidth-600, gameHeight-300);
+    gameoverScreen.setDepth(102);
     let gameoverText = this.add.text(550, 180, 'Game over', { fontSize: '32px', fill: '#000' });
+    gameoverText.setDepth(103);
     let summaryText = this.add.text(360, 230, 'The village has fallen to the Growth!\n\nYour score was: ' 
       + this.score.getScore() + "\n\nYou killed:\n * " + this.score.invaders + " twig monsters\n * " + this.score.bosses 
       + " flower monsters\n * " + this.score.creeps + " growth creeps\n\nYou also harvested " + this.score.wood
       + " pieces of wood,\nand you recruited:\n * " + this.score.farmers + " farmers\n * " + this.score.soldiers + " soldiers", 
       { fontSize: '24px', fill: '#111' });
-
+    summaryText.setDepth(103);
   }  
 }
