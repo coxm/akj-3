@@ -7,3 +7,4 @@ export * from './Tower';
 export * from './Twig';
 export * from './Wall';
 export * from './Building';
+export * from './Creep';

@@ -28,6 +28,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     this.speed = properties.speed;
     this.attackRadius = properties.attackRadius;
     this.attackStrength = properties.attackStrength;
+    this.attackCreepStrength = properties.attackCreepStrength;
     this.target = properties.target;
     this.health = this.maxHealth = properties.maxHealth;
     this.mode = modeNone;
@@ -108,20 +109,23 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     // TODO: play an animation.
     const dist = distance(this.x, this.y, this.target.x, this.target.y);
     if (this.level.step%50==0) { //|| dist < this.attackRadius) {
-      this.target.health -= this.attackStrength;
-      this.mode = modeAttacking;
+      if(this.target.constructor.name==="Creep") {//} and solider /// attack=1 because soliders hate weeding
+        this.target.health -= this.attackCreepStrength;
+      }
+      else {
+        this.target.health -= this.attackStrength;
+      }
+      console.log(this.target.constructor.name);
+      //this.mode = modeAttacking;
      // this.target.updateHealthBar();
-    }
-    else {
-     // this.mode = modeMoving;
-    }
-    if (this.target.health < 1) {
-       this.mode = modeMoving;
-       let deadBuilding = this.target;
-       this.target = null;
-       deadBuilding.destroy();
-       this.mode == modeMoving;
-       this.target = this.orgTarget;
+      if (this.target.health < 1) {
+         this.mode = modeMoving;
+         let deadBuilding = this.target;
+         this.target = null;
+         deadBuilding.destroy();
+         this.mode == modeMoving;
+         this.target = this.orgTarget;
+      }
     }
   }
 
@@ -135,6 +139,14 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     if (this.level.step%50==0) {
       target.health -= this.attackStrength;
       this.mode = modeAttacking;
+      if (this.target.health < 1) {
+         this.mode = modeMoving;
+         let deadBuilding = this.target;
+         this.target = null;
+         deadBuilding.destroy();
+         this.mode == modeMoving;
+         this.target = this.orgTarget;
+      }
     }
   }
 

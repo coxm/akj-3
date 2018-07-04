@@ -7,7 +7,7 @@ import {
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
-  Colonist, Ditch, Flower, Invader, Soldier, Tower, Twig, Wall, Building
+  Colonist, Ditch, Flower, Invader, Soldier, Tower, Twig, Wall, Building, Creep
 } from '../sprites/index';
 import {Score} from '../var/index';
 
@@ -119,6 +119,7 @@ export class Level extends Phaser.Scene {
     this.groups = {
       placement: this.add.group(),
       invaders: this.add.group(),
+      creep: this.add.group(),
       assembling: this.add.group(),
       friendlies: this.add.group(),
       buildings: this.add.group(),
@@ -155,15 +156,25 @@ export class Level extends Phaser.Scene {
       sprite.building = b;
       sprite.isBuilding = true;
       this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
+      if (b.type=="TownHall") {
+        sprite.body.setOffset(0,32);
+        sprite.body.setSize(190,128,false);
+        this.townhall=sprite;
+        this.townhall.on('destroy', this.endGame, this);
+        
+       }
       //sprite.body.immovable = true;
       this.groups.buildings.add(sprite, true);
     
     }
     //this.barracks = this.physics.add.sprite(0,0,"tileset");
      //this.physics.add.collider(this.groups.actors, this.buildings);
-     this.physics.add.overlap(this.groups.invaders, this.groups.buildings, this.attackBuilding, null, this);
-     this.physics.add.collider(this.groups.invaders, this.groups.invaders);
      this.physics.add.overlap(this.groups.invaders, this.groups.friendlies, this.attackFriendly, null, this);
+     this.physics.add.overlap(this.groups.invaders, this.groups.buildings, this.attackBuilding, null, this);
+     this.physics.add.overlap(this.groups.creep, this.groups.buildings, this.attackBuilding, null, this);
+     this.physics.add.overlap(this.groups.creep, this.groups.friendlies, this.attackFriendly, null, this);
+     this.physics.add.collider(this.groups.invaders, this.groups.invaders);
+     this.physics.add.collider(this.groups.invaders, this.groups.creep);
      this.physics.add.collider(this.groups.friendlies, this.groups.buildings);
      this.physics.add.collider(this.groups.friendlies, this.groups.friendlies);
 //   this.physics.add.collider(
@@ -354,11 +365,11 @@ export class Level extends Phaser.Scene {
 
   cancelObjectPlacementMode() {
     if (this.placingObject) {
+
       this.placingObject.sprite.active = false;
       this.placingObject.sprite.visible = false;
       this.placingObject = null;
     }
-    this.placingObject = null;
 
   }
 
@@ -386,6 +397,9 @@ export class Level extends Phaser.Scene {
       actor.update(this.step);
     }
     for (const actor of this.groups.buildings.children.entries) {
+      actor.update(this.step);
+    }
+    for (const actor of this.groups.creep.children.entries) {
       actor.update(this.step);
     }
 
@@ -429,7 +443,7 @@ export class Level extends Phaser.Scene {
     //if (actorB.building != true) {
       actorB.body.velocity.x = 0;
       actorB.body.velocity.y = 0;
-      console.log("immovable");
+      //console.log("immovable");
     // actorA.body.immovable = true;
      // actorB.body.immovable = true;
     
@@ -472,20 +486,23 @@ export class Level extends Phaser.Scene {
     friendly.attackBuilding(invader);
   }
   checkStateAndTriggerEvents() {
-    if (this.step % 100 == 0) {
+    if (this.step % 102 == 0) {
       this.state++;
+
       for (let i=0; i<1; i++) {
         this.spawnAttacker();
-        if(false){
-          let x = this.randomGen.pick([0,1024])+256;
-          let y = this.randomGen.pick([0,720]);
-          let player = this.physics.add.sprite(x, y, 'twig-monster');
+        if(true){
+          let x = 511-320+64+16 + this.randomGen.between(0,30)*32;//this.randomGen.pick([0,1024])+256;
+          let y = 368+16+352;//this.randomGen.pick([0,720]);
+          let creep = new Creep(this, x, y, null);
+          this.addSpriteAndCreateBody(creep, this.groups.creep);
           //player.setVelocity(-60,-60);
           let angle = this.randomGen.angle();
-          let speed = 50;
-          player.setVelocityX(speed * Math.cos(angle));
-          player.setVelocityY(speed * Math.sin(angle));
-          this.groups.actors.add(player);
+          let speed = 5;
+          //player.setVelocityX(speed * Math.cos(angle));
+          //player.setVelocityY(speed * Math.sin(angle));
+          creep.setFrame(60);
+          //this.groups.creep.add(player, true);
         }
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
       }
@@ -509,6 +526,13 @@ export class Level extends Phaser.Scene {
       }
     }
     for (const sprite of this.groups.invaders.children.entries) {
+      const [spriteTileX, spriteTileY] =
+        tilePositionOfPixels(sprite.x, sprite.y);
+      if (spriteTileX === tileX && spriteTileY === tileY) {
+        return sprite;
+      }
+    }
+    for (const sprite of this.groups.creep.children.entries) {
       const [spriteTileX, spriteTileY] =
         tilePositionOfPixels(sprite.x, sprite.y);
       if (spriteTileX === tileX && spriteTileY === tileY) {

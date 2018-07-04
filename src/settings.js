@@ -32,13 +32,13 @@ export const wallMaxHealth = 120;
 
 
 /** Attacker properties. */
-export const weedProperties = {
+export const creepProperties = {
   speed: 0,
   attackRadius: tileWidth*2+2,
   attackStrength: 1,
-  maxHealth: 10,
-  tileset: 'weed-monster',
-  frame: 0,
+  maxHealth: 20,
+  tileset: 'tileset',
+  frame: 60,
   isFriendly: false,
   height: 32,
   width: 32,
@@ -68,7 +68,8 @@ export const flowerProperties = {
 export const soldierProperties = {
   speed: 42,
   attackRadius: tileWidth*2+2,
-  attackStrength: 4,
+  attackStrength: 5,
+  attackCreepStrength: 5,
   maxHealth: 150,
   tileset: 'soldier',
   frame: 0,
@@ -80,6 +81,7 @@ export const colonistProperties = {
   speed: 32,
   attackRadius: tileWidth*2+2,
   attackStrength: 2,
+  attackCreepStrength: 10,
   maxHealth: 100,
   tileset: 'farmer',
   frame: 0,
