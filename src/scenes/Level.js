@@ -149,8 +149,8 @@ export class Level extends Phaser.Scene {
         b.y + this.mapOffsetY - 2 * tileHeight,
         b.type);
         */
-        const sprite = new Building(this, b.x + this.mapOffsetX + 2 * tileWidth,
-        b.y + this.mapOffsetY - 2 * tileHeight,
+        const sprite = new Building(this, b.x + this.mapOffsetX + 16 + (2 * tileWidth),
+        b.y + this.mapOffsetY - (2 * tileHeight),
         properties);
       sprite.isFriendly = true;
       sprite.building = b;
@@ -164,11 +164,11 @@ export class Level extends Phaser.Scene {
         sprite.body.setSize(190,128,false);
         this.townhall=sprite;
         this.townhall.on('destroy', this.endGame, this);
-        let townHallTop1 = this.add.sprite(b.x - 16 + this.mapOffsetX + 2 * tileWidth,
+        let townHallTop1 = this.add.sprite(b.x + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
         townHallTop1.setFrame(110);
         townHallTop1.setDepth(98);
-        let townHallTop2 = this.add.sprite(b.x + 16 + this.mapOffsetX + 2 * tileWidth,
+        let townHallTop2 = this.add.sprite(b.x + 32 + this.mapOffsetX + 2 * tileWidth,
         b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
         townHallTop2.setFrame(111);
         townHallTop2.setDepth(98);
@@ -500,7 +500,7 @@ export class Level extends Phaser.Scene {
     friendly.attackBuilding(invader);
   }
   checkStateAndTriggerEvents() {
-    if (this.step % 102 == 0) {
+    if (this.step % 1 == 0) {
       this.state++;
 
       for (let i=0; i<1; i++) {
@@ -520,16 +520,25 @@ export class Level extends Phaser.Scene {
     let found=false;
     let x=0;
     let y=1;
-    let startX=271;
-    let startY=16+18;
+    let startX=271-16;
+    let startY=2;
     let iteration=1;
     //random starting corne
-    let xMax=30;
-    let yMax=21;
+    let xMax=31;
+    let yMax=23;
     let iMax=Math.min(xMax, yMax);
 
+ 
     while(!found) {
-      if(x==xMax || y==yMax) {
+      if(iteration==yMax) {
+        if(xMax==x) {
+          return;
+        }
+        else {
+          x++;
+        }
+      }
+      else if(x==xMax || y==yMax) {
         if(x==iteration) {
           y--;
         }
