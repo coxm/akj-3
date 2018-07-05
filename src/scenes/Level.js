@@ -158,6 +158,7 @@ export class Level extends Phaser.Scene {
       this.physics.world.enable(sprite, Physics.Arcade.STATIC_BODY);
       //sprite.immovable = true;
       sprite.body.immovable = true;
+      sprite.setImmovable(true);
       if (b.type=="TownHall") {
         sprite.body.setOffset(0,32);
         sprite.body.setSize(190,128,false);
@@ -503,20 +504,9 @@ export class Level extends Phaser.Scene {
       this.state++;
 
       for (let i=0; i<1; i++) {
-        this.spawnAttacker();
-        if(true){
-          let x = 511-320+64+16 + this.randomGen.between(0,30)*32;//this.randomGen.pick([0,1024])+256;
-          let y = 368+16+352;//this.randomGen.pick([0,720]);
-          let creep = new Creep(this, x, y, null);
-          this.addSpriteAndCreateBody(creep, this.groups.creep);
-          //player.setVelocity(-60,-60);
-          let angle = this.randomGen.angle();
-          let speed = 5;
-          //player.setVelocityX(speed * Math.cos(angle));
-          //player.setVelocityY(speed * Math.sin(angle));
-          creep.setFrame(60);
-          //this.groups.creep.add(player, true);
-        }
+        //this.spawnAttacker();
+        this.spawnCreep();
+        
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
       }
     }
@@ -525,6 +515,87 @@ export class Level extends Phaser.Scene {
     }
   }
 
+
+  spawnCreep() {
+    let found=false;
+    let x=0;
+    let y=1;
+    let startX=271;
+    let startY=16+18;
+    let iteration=1;
+    //random starting corne
+    let xMax=30;
+    let yMax=21;
+    let iMax=Math.min(xMax, yMax);
+
+    while(!found) {
+      if(x==xMax || y==yMax) {
+        if(x==iteration) {
+          y--;
+        }
+        else if(y==yMax) {
+          x--;
+        }
+        else {
+          y++;
+        }
+      }
+      else {
+        if(y==iteration) {
+          x++;
+        }
+        else if(y==iteration+1) {
+          iteration++;
+          yMax--;
+          xMax--;
+          x++;
+        }
+        else if (iteration==iMax) {
+          //giveup=true;
+          return;
+        }
+        else{
+          y--;
+        }
+      }
+      //console.log("in spawnCreep loop x/y=" + x + "/" + y);
+      if(!this.creepInPos((x*32)+startX,(y*32)+startY)) {
+        found=true;
+      }
+    }
+    if (found) {
+      //console.log("spawning creep at " + x + "/" + y);
+//    let x = 511-320+64+16 + this.randomGen.between(0,30)*32;//this.randomGen.pick([0,1024])+256;
+//    let y = 368+16+352;//this.randomGen.pick([0,720]);
+      let creep = new Creep(this, (x*32)+startX, (y*32)+startY, null);
+      //console.log("newcreep at " + (x*32)+startX + "/" + (y*32)+startY);
+      this.addSpriteAndCreateBody(creep, this.groups.creep);
+      creep.setFrame(60);
+      //creep.resizeAndSetOrgTarget();
+      creep.setOrigin(0.5);
+      //player.setVelocity(-60,-60);
+     // let angle = this.randomGen.angle();
+      //let speed = 5;
+      //player.setVelocityX(speed * Math.cos(angle));
+      //player.setVelocityY(speed * Math.sin(angle));
+
+      //this.groups.creep.add(creep, true);
+    }
+  }
+
+  creepInPos(posX, posY) {
+   // let posX2 = (_x*32)+271+32;
+    //let posY2 = (_y*32)+16;
+    //console.log("len" + this.groups.creep.children.entries);
+    //console.log("comparing...");
+    for (const sprite of this.groups.creep.children.entries) {
+       //console.log("comparing wanted posX/Y " + posX + "/" + posY + " with " + sprite.x + "/" + sprite.y);
+      if (posX === sprite.x && posY === sprite.y) {
+        return true;
+      }
+    }
+   return false;
+  }
   /**
    * Get the sprite in a tile position, or null if the tile is empty.
    *
@@ -566,7 +637,7 @@ export class Level extends Phaser.Scene {
   addSpriteAndCreateBody(sprite, group, bodyType = Physics.Arcade.DYNAMIC_BODY) {
     this.physics.world.enable(sprite, bodyType);
     group.add(sprite, true);
-    sprite.resize();
+    sprite.resizeAndSetOrgTarget();
     //this.physics.add.existing(sprite);
     //sprite.setActive(); // oooh
   }

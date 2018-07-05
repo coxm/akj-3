@@ -39,13 +39,14 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
 //    this.healthBar.fillStyle(0x999999, 1);
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;
+    this.healthBar.setDepth(9);
     this.on('destroy', () => { this.healthBar.destroy(); });
     this.updateHealthBar(true);
     this.once = true;
     this.properties = properties;
   }
 
-  resize() {
+  resizeAndSetOrgTarget() {
     this.orgTarget = this.target;
     this.setSize(this.properties.width, this.properties.height);
   }
