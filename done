@@ -8,10 +8,10 @@ creep - spread
 add this to git
 change buildings so creep can cover all (make map smaller as well I think)
 add borders with depth and inc depth on UI
+drop wood on death - (auto fade away)
+angle-based movement for your units
 
 todo:
-angle-based movement for your units
-drop wood on death - (auto fade away)
 make towers line up with walls? done?
 make towers attack
 only attack one thing per turn

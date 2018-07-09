@@ -86,10 +86,12 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
       this.target = target;
     }
     this.setVelocity(0,0);
-    this.target = new Object({x:256+512,y:360});
+    //this.target = new Object({x:256+512,y:360});
 
     const signX = Math.sign(this.target.x - this.x);
     const signY = Math.sign(this.target.y - this.y);
+
+    let angle = Math.atan2(this.target.y - this.y, this.target.x - this.x) * 180 / Math.PI;
 
 //    let collision = this.level.physics.world.collide(
   //        this,
@@ -101,17 +103,17 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
 
 //console.log(signX + " / " + signY + " : " + this.body.touching.left);
     if (!(this.body.touching.down) && signY>0) {
-      this.setVelocityY(this.speed * signY);
+      this.setVelocityY(this.speed * Math.sin(angle));
     }
 
     if (!(this.body.touching.up) && signY<0) {
-      this.setVelocityY(this.speed * signY);
+      this.setVelocityY(this.speed * Math.sin(angle));
     }
     if (!(this.body.touching.left) && signX<0) {
-      this.setVelocityX(this.speed * signX);
+      this.setVelocityX(this.speed * Math.cos(angle));
     }
     if (!(this.body.touching.right) && signX>0) {
-      this.setVelocityX(this.speed * signX);
+      this.setVelocityX(this.speed * Math.cos(angle));
     }
     this.mode = modeMoving;
     this.once = false;
