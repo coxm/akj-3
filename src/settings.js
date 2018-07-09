@@ -42,6 +42,7 @@ export const creepProperties = {
   isFriendly: false,
   height: 32,
   width: 32,
+  woodOnDeath: 10.
 };
 export const twigProperties = {
   speed: 40,
@@ -53,6 +54,7 @@ export const twigProperties = {
   isFriendly: false,
   height: 26,
   width: 26,
+  woodOnDeath: 50.
 };
 export const flowerProperties = {
   speed: 30,
@@ -64,11 +66,12 @@ export const flowerProperties = {
   isFriendly: false,
   height: 60,
   width: 40,
+  woodOnDeath: 100.
 };
 export const soldierProperties = {
   speed: 42,
   attackRadius: tileWidth*2+2,
-  attackStrength: 5,
+  attackStrength: 15,
   attackCreepStrength: 5,
   maxHealth: 150,
   tileset: 'soldier',
@@ -80,7 +83,7 @@ export const soldierProperties = {
 export const colonistProperties = {
   speed: 32,
   attackRadius: tileWidth*2+2,
-  attackStrength: 2,
+  attackStrength: 12,
   attackCreepStrength: 10,
   maxHealth: 100,
   tileset: 'farmer',
@@ -158,13 +161,14 @@ export const woodRequiredForStructure = {
   wall: 10,
 };
 
-
+// obsolete:
+/*
 export const woodGainedFromKilling = {
   Weed: 10,
   Twig: 50,
   Flower: 100,
 };
-
+*/
 
 /** The initial wood in the player's stockpile. */
 export const initialWood = 100;

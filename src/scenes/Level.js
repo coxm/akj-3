@@ -3,7 +3,7 @@ import {Physics, Scene} from 'phaser';
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
   structureAssembleRate, gameHeight, gameWidth, woodRequiredForUnit,
-  woodRequiredForStructure, woodGainedFromKilling, initialWood,
+  woodRequiredForStructure, initialWood,
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
@@ -101,8 +101,8 @@ export class Level extends Phaser.Scene {
   }
 
   createTilemap() {
-    this.mapOffsetX = 271;
-    this.mapOffsetY = 16;
+    this.mapOffsetX = 271-32;
+    this.mapOffsetY = 16-32;
     this.tilemap = this.make.tilemap({
       key: `tilemap:${this.sys.config.key}`,
       tileWidth: 32,
@@ -201,6 +201,7 @@ export class Level extends Phaser.Scene {
     this.input.mouse.disableContextMenu();
 
     let ui_img = this.add.image(128, 768, 'ui-img');
+    ui_img.setDepth(11);
 //    ui_img.displayHeight = 768;
 
     this.buttons = {
@@ -223,40 +224,77 @@ export class Level extends Phaser.Scene {
       button.on('pointerup', function(event) {
         this.setButtonDownState(button, false);
       }, this);
+      button.setDepth(12);
     }
 
     for (const structureId of ['wall', 'tower']) {
       const button = this.buttons[structureId];
+      button.setDepth(12);
       button.on('pointerdown', function() {
         this.enterPlacementMode(structureId);
       }, this);
     }    
-    this.buttons.soldier.on('pointerdown', () => { this.spawnSoldier(); });
-    this.buttons.colonist.on('pointerdown', () => { this.spawnColonist(); });
+    this.buttons.soldier.on('pointerdown', () => { 
+      this.cancelAllModes();
+      this.spawnSoldier(); 
+    });
+    this.buttons.colonist.on('pointerdown', () => { 
+      this.cancelAllModes();
+      this.spawnColonist(); 
+    });
     
     this.score = new Score();
     this.scoreText = this.add.text(716, 16, 'Score: 0', { fontSize: '32px', fill: '#777' });
+    this.scoreText.setDepth(12);
     this.scoreText.visible = false;
     this.woodText = this.add.text(40, 572, `Wood: ${this.woodRemaining}`, {
       fontSize: '32px',
       fill: '#111',
     });
+    this.woodText.setDepth(12);
     let wall_cost_img = this.add.image(50, 110, 'tileset');
     wall_cost_img.setFrame(69);
+    wall_cost_img.setDepth(12);
     let wall_cost_label = this.add.text(70, 98, '' + woodRequiredForStructure["wall"], { fontSize: '24px', fill: '#111' });
+    wall_cost_label.setDepth(12);
     let tower_cost_img = this.add.image(178, 110, 'tileset');
     tower_cost_img.setFrame(69);
+    tower_cost_img.setDepth(12);
     let tower_cost_label = this.add.text(198, 98, '' + woodRequiredForStructure["tower"], { fontSize: '24px', fill: '#111' });
+    tower_cost_label.setDepth(12);
 
     let soldier_cost_img = this.add.image(50, 302, 'tileset');
     soldier_cost_img.setFrame(69);
+    soldier_cost_img.setDepth(12);
     let soldier_cost_label = this.add.text(70, 290, '' + woodRequiredForUnit["Soldier"], { fontSize: '24px', fill: '#111' });
+    soldier_cost_label.setDepth(12);
     let farmer_cost_img = this.add.image(178, 302, 'tileset');
     farmer_cost_img.setFrame(69);
+    farmer_cost_img.setDepth(12);
     let farmer_cost_label = this.add.text(198, 290, '' + woodRequiredForUnit["Colonist"], { fontSize: '24px', fill: '#111' });
+    farmer_cost_label.setDepth(12);
 
     this.towerPlacementPointer = this.add.sprite(-128, -108, 'tower');
     placementModeInfo.tower.sprite = this.towerPlacementPointer;
+    placementModeInfo.tower.sprite.setDepth(12);
+
+
+    let blackOverlayTop = this.add.graphics();
+    blackOverlayTop.fillStyle(0x000000, 1);
+    blackOverlayTop.fillRect(256, 0, gameWidth-200, 16);
+    blackOverlayTop.setDepth(50);
+    let blackOverlayBot = this.add.graphics();
+    blackOverlayBot.fillStyle(0x000000, 1);
+    blackOverlayBot.fillRect(256, gameHeight-16, gameWidth, 16);
+    blackOverlayBot.setDepth(50);
+    let blackOverlayRight = this.add.graphics();
+    blackOverlayRight.fillStyle(0x000000, 1);
+    blackOverlayRight.fillRect(gameWidth-17, 0, 17, gameHeight);
+    blackOverlayRight.setDepth(50);
+    let blackOverlayLeft = this.add.graphics();
+    blackOverlayLeft.fillStyle(0x000000, 1);
+    blackOverlayLeft.fillRect(256, 0, 16, gameHeight);
+    blackOverlayLeft.setDepth(50);
   }
 
   createInput() {
@@ -332,6 +370,7 @@ export class Level extends Phaser.Scene {
       details.sprite = this.add.sprite(
         pointer.x, pointer.y, tilesetName, details.frame);
       details.sprite.alpha = 0.5;
+      details.sprite.setDepth(12);
       this.groups.placement.add(details.sprite);
     }
     const sprite = details.sprite;
@@ -345,13 +384,24 @@ export class Level extends Phaser.Scene {
     if (this.input.mousePointer.x <= 264) { 
       return; 
     }
-    const [tileX, tileY] = tilePositionOfPixels(
-      this.input.mousePointer.x, this.input.mousePointer.y);
+    const [atileX, atileY] = tilePositionOfPixels(
+      Math.floor(this.input.mousePointer.x/32)*32, Math.floor(this.input.mousePointer.y/32)*32);
+    const tileX = Math.floor(this.input.mousePointer.x/32)*32;
+    const tileY = Math.floor(this.input.mousePointer.y/32)*32;
 
-    if (this.getObjectInTile(tileX, tileY)) {
+    if (this.getObjectInTile(tileX, tileY)!=null) {
       __DEV__ && console.log('Something already occupies that tile!');
       // TODO: play a sound effect or something?
       return;
+    }
+    if(this.placingObject.id === "tower") {
+      if (this.getObjectInTile(tileX+1, tileY)!=null || this.getObjectInTile(tileX, tileY-1)!=null ||
+        this.getObjectInTile(tileX+1, tileY-1)!=null) {
+        __DEV__ && console.log('Something already occupies that tile!');
+        // TODO: play a sound effect or something?
+        return;
+      }
+
     }
 
     this.input.off('pointerdown', this.attemptObjectPlacement, this);
@@ -366,7 +416,9 @@ export class Level extends Phaser.Scene {
       properties = towerProperties;
     }
     const sprite = new Building(this, x, y, properties);
-
+    if(this.placingObject.id === "tower") {
+    //  sprite.setOrigin(1,1);
+    }
     this.groups.assembling.add(sprite, true);
     sprite.alpha = 0;
     sprite.health = 0;
@@ -500,11 +552,11 @@ export class Level extends Phaser.Scene {
     friendly.attackBuilding(invader);
   }
   checkStateAndTriggerEvents() {
-    if (this.step % 1 == 0) {
+    if (this.step % 102 == 0) {
       this.state++;
 
       for (let i=0; i<1; i++) {
-        //this.spawnAttacker();
+        this.spawnAttacker();
         this.spawnCreep();
         
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
@@ -605,12 +657,27 @@ export class Level extends Phaser.Scene {
     }
    return false;
   }
+  friendlyInPos(posX, posY) {
+   // let posX2 = (_x*32)+271+32;
+    //let posY2 = (_y*32)+16;
+    //console.log("len" + this.groups.creep.children.entries);
+    //console.log("comparing...");
+    for (const sprite of this.groups.friendlies.children.entries) {
+       //console.log("comparing wanted posX/Y " + posX + "/" + posY + " with " + sprite.x + "/" + sprite.y);
+      if (posX === sprite.x && posY === sprite.y) {
+        return true;
+      }
+    }
+   return false;
+  }
+  /**
   /**
    * Get the sprite in a tile position, or null if the tile is empty.
    *
    * @returns {Phaser.GameObjects.Sprite | null}
    */
   getObjectInTile(tileX, tileY) {
+    console.log("looking fir " + tileX + "/" + tileY);
     for (const sprite of this.groups.friendlies.children.entries) {
       const [spriteTileX, spriteTileY] =
         tilePositionOfPixels(sprite.x, sprite.y);
@@ -632,10 +699,28 @@ export class Level extends Phaser.Scene {
         return sprite;
       }
     }
+    // TODO : AABB on this and assembling (due to tower), tile based on rest
+
+
     for (const sprite of this.groups.buildings.children.entries) {
+      const spriteTileX = sprite.x; 
+      const spriteTileY = sprite.y; 
+        //tilePositionOfPixels(sprite.x, sprite.y);
+        //
+
+        console.log("found " + sprite.x-(sprite.width/2) + "/" + sprite.y-(sprite.height/2) + " to "
+          + sprite.x+(sprite.width/2) + "/" + sprite.y+(sprite.height/2));
+      if (spriteTileX-(sprite.width/2) <= tileX && spriteTileX+(sprite.width/2) >= tileX && 
+         spriteTileY-(sprite.height/2) <= tileY && spriteTileY+(sprite.height/2) >= tileY) { 
+        console.log("there's a Building here")
+        return sprite;
+      }
+    }
+    for (const sprite of this.groups.assembling.children.entries) {
       const [spriteTileX, spriteTileY] =
         tilePositionOfPixels(sprite.x, sprite.y);
-      if (spriteTileX === tileX && spriteTileY === tileY) {
+      if (spriteTileX-sprite.width/2 >= tileX && spriteTileX+sprite.width/2 <= tileX && 
+         spriteTileY-sprite.height/2 >= tileY && spriteTileY+sprite.height/2 <= tileY) { 
         return sprite;
       }
     }
@@ -669,6 +754,10 @@ export class Level extends Phaser.Scene {
   }
 
   spawnFriendly(cls, spawnName) {
+    let spawn = requireNamedValue(this.friendlySpawns, spawnName);
+    while(this.friendlyInPos(spawn.x,spawn.y)) {
+      spawn.x-=32;
+    }
     const woodRequired = woodRequiredForUnit[cls.name];
     if (this.wood < woodRequired) {
       // TODO: add text object explaining.
@@ -676,7 +765,6 @@ export class Level extends Phaser.Scene {
       return false;
     }
     this.wood -= woodRequired;
-    const spawn = requireNamedValue(this.friendlySpawns, spawnName);
     const sprite = new cls(this, spawn.x, spawn.y);
     this.addSpriteAndCreateBody(sprite, this.groups.friendlies);
     sprite.setInteractive().on(
@@ -709,6 +797,27 @@ export class Level extends Phaser.Scene {
       objects = objects.map(obj => this.makePointObject(obj));
     }
     return objects;
+  }
+
+  spawnWood(x,y,amount) {
+      let woodSprite = this.add.sprite(x, y, 'tileset');
+      woodSprite.setFrame(69);
+      var tween = this.tweens.add({
+        targets: woodSprite,
+        props: {
+            alpha: 0
+        },
+        duration: 1000,
+        yoyo: false,
+        repeat: 0
+      });
+      let timedEvent = this.time.addEvent({ delay: 1000, callback: function() { woodSprite.destroy(); }, callbackScope: this});
+      
+      this.woodRemaining += amount;
+      this.score.wood += amount;
+      this.woodText.setText(`Wood: ${this.woodRemaining}`);
+
+   //   this.setWood(this.woodRemaining);
   }
 
   endGame() { 

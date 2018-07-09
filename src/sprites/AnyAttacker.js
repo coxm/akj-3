@@ -36,11 +36,35 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     this.isFriendly = properties.isFriendly;
     this.healthBar = level.add.graphics();
     this.level = level;
+   // this.properties = properties;
 //    this.healthBar.fillStyle(0x999999, 1);
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;
     this.healthBar.setDepth(9);
-    this.on('destroy', () => { this.healthBar.destroy(); });
+    this.on('destroy', () => { 
+      this.healthBar.destroy();
+      console.log("something died:" + this.constructor.name);
+      switch(this.constructor.name) {
+        case "Colonist": break;
+        case "Soldier": break;
+        case "Creep": 
+          this.level.score.creep++;
+          level.spawnWood(this.x,this.y,properties.woodOnDeath);
+          break;
+        case "Twig":
+        console.log("yisss");
+          this.level.score.invaders++;
+          level.spawnWood(this.x,this.y,properties.woodOnDeath);
+          break;
+        case "Flower":
+        console.log("yiss");
+          this.level.score.bosses++;
+          level.spawnWood(this.x,this.y,properties.woodOnDeath);
+          break;
+        default:
+      }
+
+    });
     this.updateHealthBar(true);
     this.once = true;
     this.properties = properties;
