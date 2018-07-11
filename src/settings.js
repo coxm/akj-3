@@ -120,14 +120,23 @@ export const townHallProperties = {
   isFriendly: true,
   tileset: 'townHall',
 };
-export const townHouseProperties = {
+export const towerHouseProperties = {
   speed: 0,
   attackRadius: 0,
   attackStrength: 0,
   maxHealth: 300,
   frame: 0,
   isFriendly: true,
-  tileset: 'townHouse',
+  tileset: 'towerHouse',
+};
+export const wallHouseProperties = {
+  speed: 0,
+  attackRadius: 0,
+  attackStrength: 0,
+  maxHealth: 300,
+  frame: 0,
+  isFriendly: true,
+  tileset: 'wallHouse',
 };
 export const wallProperties = {
   speed: 0,

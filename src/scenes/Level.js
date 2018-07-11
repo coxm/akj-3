@@ -12,7 +12,7 @@ import {
 import {Score} from '../var/index';
 
 import {barracksProperties, wallProperties, towerProperties,
-  townHouseProperties, townHallProperties, farmProperties} from '../settings';
+  wallHouseProperties, towerHouseProperties, townHallProperties, farmProperties} from '../settings';
 
 const placementModeInfo = {
   ditch: {
@@ -141,7 +141,8 @@ export class Level extends Phaser.Scene {
         case "Barracks": properties = barracksProperties; break;
         case "TownHall": properties = townHallProperties; break;
         case "FarmHouse": properties = farmProperties; break;
-        case "PlainBuilding": properties = townHouseProperties; break;
+        case "TowerHouse": properties = towerHouseProperties; break;
+        case "WallHouse": properties = wallHouseProperties; break;
       }
      /* 
       const sprite = this.physics.add.staticSprite(
@@ -812,7 +813,7 @@ export class Level extends Phaser.Scene {
         repeat: 0
       });
       let timedEvent = this.time.addEvent({ delay: 1000, callback: function() { woodSprite.destroy(); }, callbackScope: this});
-      
+
       this.woodRemaining += amount;
       this.score.wood += amount;
       this.woodText.setText(`Wood: ${this.woodRemaining}`);

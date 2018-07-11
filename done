@@ -10,10 +10,18 @@ change buildings so creep can cover all (make map smaller as well I think)
 add borders with depth and inc depth on UI
 drop wood on death - (auto fade away)
 angle-based movement for your units
+make building darks the same
+upgrades: cement walls and taller towers
 
 todo:
+add logos rto buildings
+building for walls and one for towers
+razing buildings remove that feature
+repair buildings
+cant build on river
+remove river so you can build a proper defense?
 make towers line up with walls? done?
-make towers attack
+make towers attack. use different sprites to get right "light"
 only attack one thing per turn
 animations for attack, movement, creep
 stop and attack walls ffs
