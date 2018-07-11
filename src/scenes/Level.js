@@ -97,6 +97,11 @@ export class Level extends Phaser.Scene {
     this.createInput();
     this.createUI();
 
+    this.hasBarrack = true;
+    this.hasFarm = true;
+    this.hasTowerHouse = true;
+    this.hasWallHouse = true;
+
     this.randomGen = new Phaser.Math.RandomDataGenerator(2);
   }
 
@@ -139,10 +144,10 @@ export class Level extends Phaser.Scene {
       let properties = null;
       switch(b.type) {
         case "Barracks": properties = barracksProperties; break;
-        case "TownHall": properties = townHallProperties; break;
         case "FarmHouse": properties = farmProperties; break;
         case "TowerHouse": properties = towerHouseProperties; break;
         case "WallHouse": properties = wallHouseProperties; break;
+        case "TownHall": properties = townHallProperties; break;
       }
      /* 
       const sprite = this.physics.add.staticSprite(
@@ -160,7 +165,22 @@ export class Level extends Phaser.Scene {
       //sprite.immovable = true;
       sprite.body.immovable = true;
       sprite.setImmovable(true);
-      if (b.type=="TownHall") {
+
+      // the old double switcharoo
+      switch(b.type) {
+        case "Barracks":
+          sprite.on('destroy', function() { this.hasBarrack=false; }, this);        
+          break;
+        case "FarmHouse":
+          sprite.on('destroy', function() { this.hasFarm=false; }, this);        
+          break;
+        case "TowerHouse": 
+          sprite.on('destroy', function() { this.hasTowerHouse=false; }, this);        
+          break;
+        case "WallHouse":
+          sprite.on('destroy', function() { this.hasWallHouse=false; }, this);        
+          break;
+        case "TownHall":
         sprite.body.setOffset(0,32);
         sprite.body.setSize(190,128,false);
         this.townhall=sprite;
@@ -359,10 +379,20 @@ export class Level extends Phaser.Scene {
     this.cancelAllModes();
 
     const woodRequired = woodRequiredForStructure[id];
+    if(id=="wall" && !this.hasWallHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't build wall without a wall workshop!");
+      return false;
+    }
+    if(id=="tower" && !this.hasTowerHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't build tower without a tower workshop!");
+      return false;
+    }
     if (this.wood < woodRequired) {
       // TODO: add text object explaining.
       console.log('Insufficient wood for', id);
-      return;
+      return false;
     }
 
     const pointer = this.input.mousePointer;
@@ -747,10 +777,20 @@ export class Level extends Phaser.Scene {
   }
 
   spawnSoldier() {
+    if(!this.hasBarrack) {
+      // TODO: add text object explaining.
+      console.log("Can't build soldier without a barracks!");
+      return false;
+    }
     return this.spawnFriendly(Soldier, 'SoldierSpawn');
   }
 
   spawnColonist() {
+    if(!this.hasFarm) {
+      // TODO: add text object explaining.
+      console.log("Can't build farmer without a farm!");
+      return false;
+    }
     return this.spawnFriendly(Colonist, 'ColonistSpawn');
   }
 
