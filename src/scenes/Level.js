@@ -88,7 +88,7 @@ export class Level extends Phaser.Scene {
         this.playMainMusicDramatic();
     });
 
-    this.mainMusic.play();
+    //this.mainMusic.play();
 
 
     this.woodRemaining = initialWood;
@@ -114,10 +114,12 @@ export class Level extends Phaser.Scene {
       tileHeight: 32,
     });
     this.tileset = this.tilemap.addTilesetImage('tileset', tilesetName);
-    this.tileLayers = ['ground', 'rear', 'fore'].reduce((dict, name) => {
+    this.tileLayers = ['river','ground', 'rear', 'fore'].reduce((dict, name) => {
       dict[name] = this.tilemap.createStaticLayer(name, this.tileset, this.mapOffsetX, this.mapOffsetY);
       return dict;
     }, {});
+
+    this.tileLayers['river'].setCollisionByExclusion([-1]);
   }
 
   createActors() {
@@ -136,7 +138,11 @@ export class Level extends Phaser.Scene {
     this.friendlySpawns = this.loadSpawns('friendlySpawns');
     this.placingObject = null; // {id: string; sprite: Sprite;}
 
-    // TODO create building obj so they can have health bars
+
+    // TODO: add to physics, then hide
+ //     r.visible = false;
+//
+  //  }
 
     const buildings = requireNamedValue(this.tilemap.objects, 'buildings');
     for (const b of buildings.objects) {
@@ -209,6 +215,10 @@ export class Level extends Phaser.Scene {
     //this.physics.add.collider(this.groups.invaders, this.groups.creep); // nah just walk over
      this.physics.add.collider(this.groups.friendlies, this.groups.buildings);
      this.physics.add.collider(this.groups.friendlies, this.groups.friendlies);
+
+     this.physics.add.collider(this.groups.creep, this.tileLayers['river']);
+     this.physics.add.collider(this.groups.invaders, this.tileLayers['river']);
+     this.physics.add.collider(this.groups.friendlies, this.tileLayers['river']);
 //   this.physics.add.collider(
   //    this.groups.actors,
     //  this.groups.actors,
@@ -378,23 +388,6 @@ export class Level extends Phaser.Scene {
   enterPlacementMode(id) {
     this.cancelAllModes();
 
-    const woodRequired = woodRequiredForStructure[id];
-    if(id=="wall" && !this.hasWallHouse) {
-      // TODO: add text object explaining.
-      console.log("Can't build wall without a wall workshop!");
-      return false;
-    }
-    if(id=="tower" && !this.hasTowerHouse) {
-      // TODO: add text object explaining.
-      console.log("Can't build tower without a tower workshop!");
-      return false;
-    }
-    if (this.wood < woodRequired) {
-      // TODO: add text object explaining.
-      console.log('Insufficient wood for', id);
-      return false;
-    }
-
     const pointer = this.input.mousePointer;
     const details = placementModeInfo[id];
     if (!details.sprite) {
@@ -412,6 +405,29 @@ export class Level extends Phaser.Scene {
   }
 
   attemptObjectPlacement() {
+
+    let id = this.placingObject.id;
+
+    const woodRequired = woodRequiredForStructure[id];
+    if(id=="wall" && !this.hasWallHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't build wall without a wall workshop!");
+      this.cancelAllModes();
+      return false;
+    }
+    if(id=="tower" && !this.hasTowerHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't build tower without a tower workshop!");
+      this.cancelAllModes();
+      return false;
+    }
+    if (this.wood < woodRequired) {
+      // TODO: add text object explaining.
+      console.log('Insufficient wood for', id);
+      this.cancelAllModes();
+      return false;
+    }
+
     if (this.input.mousePointer.x <= 264) { 
       return; 
     }
@@ -583,11 +599,11 @@ export class Level extends Phaser.Scene {
     friendly.attackBuilding(invader);
   }
   checkStateAndTriggerEvents() {
-    if (this.step % 102 == 0) {
+    if (this.step % 3 == 0) {
       this.state++;
 
       for (let i=0; i<1; i++) {
-        this.spawnAttacker();
+        //this.spawnAttacker();
         this.spawnCreep();
         
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
@@ -651,7 +667,7 @@ export class Level extends Phaser.Scene {
         }
       }
       //console.log("in spawnCreep loop x/y=" + x + "/" + y);
-      if(!this.creepInPos((x*32)+startX,(y*32)+startY)) {
+      if(!this.creepInPos((x*32)+startX,(y*32)+startY) && Math.random() > 0.8) { // randomly skip
         found=true;
       }
     }
@@ -659,10 +675,40 @@ export class Level extends Phaser.Scene {
       //console.log("spawning creep at " + x + "/" + y);
 //    let x = 511-320+64+16 + this.randomGen.between(0,30)*32;//this.randomGen.pick([0,1024])+256;
 //    let y = 368+16+352;//this.randomGen.pick([0,720]);
-      let creep = new Creep(this, (x*32)+startX, (y*32)+startY, null);
+      let frame=60;
+      if ((y==1) || (y==2 && x<11) || (y==3 && x<5) || (y==4 && x<4) || (y==5 && x<3) || (y==6 && x<2) || (y==7 && x==1) ||
+        (y==2 && x>29) || (y==1 && x>30) || (x==31 && y==3) || (x==31 && y>20) || (x==30 && y>21) || (x>26 && y==23) ||
+        (y==23 && x<7) || (y>17 && x==1) || (y>18 && x==2) || (y>20 && x==3) || (y==22 && x==4)) {
+        frame=10;
+      }
+      if ((y==11 && x==1) || (y==17 && x==1) || (y==18 && x==2) || (y==19 && x==3) || (y==21 && x==4) || (y==22 && x==6) || (y==23 && x==8)) {
+        frame=2;
+      }
+      if ((x>27 && x<30 && y==22) || (x>23 && x<27 && y==23) || (y==23 && x==7) || (y==22 && x==5)) {
+        frame=1;
+      }
+      if ((x==30 && y==21) || (x==27 && y==22) || (x==23 && y==23) || (x==31 && y==19)) {
+        frame=0;
+      }
+      if ((x==31 && y>3 && y<10) || (x==31 && y==20)) {
+        frame=9;
+      }
+      if ((y==3 && x==30) || (x==31 && y==10)) {
+        frame=18;
+      }
+      if ((y==6 && x==2) || (y==12 && x==1) || (y==13 && x==1) || (y==20 && x==3)) {
+        frame=11;
+      }
+      if ((y==3 && x==10) || (y==4 && x==4) || (y==5 && x==3) || (y==7 && x==2) || (y==8 && x==1) || (y==14 && x==1)) {
+        frame=20;
+      }
+      if ((y==2 && x>10 && x<30) || (y==3 && x>4 && x<10)) {
+        frame=19;
+      }
+      let creep = new Creep(this, (x*32)+startX, (y*32)+startY, frame, null, null);
       //console.log("newcreep at " + (x*32)+startX + "/" + (y*32)+startY);
       this.addSpriteAndCreateBody(creep, this.groups.creep);
-      creep.setFrame(60);
+      //creep.setFrame(60);
       //creep.resizeAndSetOrgTarget();
       creep.setOrigin(0.5);
       //player.setVelocity(-60,-60);
