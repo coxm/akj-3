@@ -23,6 +23,9 @@ todo:
 medium:
 *cant build on river
  make towers line up with walls? done?
+ 	* fix the tiling for buildings
+ 	* resize body for tower
+ 	* use right frames for both
 
 hard:
 *repair buildings

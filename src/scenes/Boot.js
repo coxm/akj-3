@@ -53,7 +53,11 @@ export class Boot extends Scene {
     this.load.image('barracks', 'assets/img/buildings/plain.png');
     this.load.image('farm', 'assets/img/buildings/farm_building.png');
     this.load.image('townHall', 'assets/img/buildings/town_hall.png');
-    this.load.image('tower', 'assets/img/buildings/watch_tower_2x2.png');
+    this.load.spritesheet('tower', 'assets/img/buildings/watch_tower_2x2.png', {
+      frameWidth: 64,
+      frameHeight: 80,
+      spacing: 0,
+    });
     this.load.image('towerHouse', 'assets/img/buildings/tower_building.png');
     this.load.image('wallHouse', 'assets/img/buildings/wall_building.png');
 

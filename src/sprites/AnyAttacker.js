@@ -48,8 +48,10 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
         case "Colonist": break;
         case "Soldier": break;
         case "Creep": 
-          this.level.score.creep++;
-          level.spawnWood(this.x,this.y,properties.woodOnDeath);
+          if(this.level.gameStarted) {
+            this.level.score.creep++;
+            level.spawnWood(this.x,this.y,properties.woodOnDeath);
+          }
           break;
         case "Twig":
         console.log("yisss");
@@ -197,7 +199,7 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     //  }
     }
     if (this.health<1) {
-      this.destroy();
+      this.kill();
     }
   }
 

@@ -76,7 +76,7 @@ export class Level extends Phaser.Scene {
 
   create() {
     this.state = 1; // state is the current "wave"/event
-    this.step = 9991; // step is just a counter incremented by update. states are triggered by step numbers
+    this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
     this.gameover = false;
     this.mainMusic = this.sound.add('main-theme');
     this.mainMusicDramatic = this.sound.add('main-theme-dramatic');
@@ -90,10 +90,29 @@ export class Level extends Phaser.Scene {
 
     //this.mainMusic.play();
 
-
+    this.gameStarted = false;
     this.woodRemaining = initialWood;
     this.createTilemap();
     this.createActors();
+    for(let i=0; i<289; i++) { 
+      this.spawnCreep(true);
+    }
+//    for (let actor of this.groups.creep.children.entries) {
+    let toBeDestroyed = [];
+    this.groups.creep.children.iterate(function (actor) {
+      
+      if(actor.frame.name===60) {
+       toBeDestroyed.push(actor);
+      }
+    });
+    let i = toBeDestroyed.length - 1;
+    while(i > -1) {
+        let getitem = toBeDestroyed[i];
+        getitem.destroy();
+        i--;
+    }
+    
+    //this.groups.creep.filter(function(actor) { return actor.frame.name===60; }).callAll('destroy');
     this.createInput();
     this.createUI();
 
@@ -103,6 +122,8 @@ export class Level extends Phaser.Scene {
     this.hasWallHouse = true;
 
     this.randomGen = new Phaser.Math.RandomDataGenerator(2);
+    this.gameStarted = true;
+
   }
 
   createTilemap() {
@@ -125,9 +146,9 @@ export class Level extends Phaser.Scene {
   createActors() {
     this.groups = {
       placement: this.add.group(),
-      invaders: this.add.group(),
-      creep: this.add.group(),
       assembling: this.add.group(),
+      creep: this.add.group(),
+      invaders: this.add.group(),
       friendlies: this.add.group(),
       buildings: this.add.group(),
     };
@@ -400,6 +421,7 @@ export class Level extends Phaser.Scene {
     const sprite = details.sprite;
     sprite.visible = true;
     sprite.active = true;
+    sprite.setOrigin(1,1);
     this.placingObject = {id, sprite};
     this.input.on('pointerdown', this.attemptObjectPlacement, this);
   }
@@ -462,10 +484,15 @@ export class Level extends Phaser.Scene {
     else if(this.placingObject.id === "tower") {
       properties = towerProperties;
     }
-    const sprite = new Building(this, x, y, properties);
+    console.log(x + "/" + y + " wall")
+    const sprite = new Building(this, tileX, tileY, properties);
     if(this.placingObject.id === "tower") {
     //  sprite.setOrigin(1,1);
+    sprite.y-=16;
+    sprite.setFrame(0);
+      //sprite.setSize(64,32);
     }
+
     this.groups.assembling.add(sprite, true);
     sprite.alpha = 0;
     sprite.health = 0;
@@ -599,11 +626,11 @@ export class Level extends Phaser.Scene {
     friendly.attackBuilding(invader);
   }
   checkStateAndTriggerEvents() {
-    if (this.step % 3 == 0) {
+    if (this.step % 300 == 0) {
       this.state++;
 
       for (let i=0; i<1; i++) {
-        //this.spawnAttacker();
+        this.spawnAttacker();
         this.spawnCreep();
         
         this.scoreText.setText("Score: " + this.score.getScore() + "\nState: " + this.state);
@@ -615,7 +642,7 @@ export class Level extends Phaser.Scene {
   }
 
 
-  spawnCreep() {
+  spawnCreep(setup=false) {
     let found=false;
     let x=0;
     let y=1;
@@ -667,7 +694,7 @@ export class Level extends Phaser.Scene {
         }
       }
       //console.log("in spawnCreep loop x/y=" + x + "/" + y);
-      if(!this.creepInPos((x*32)+startX,(y*32)+startY) && Math.random() > 0.8) { // randomly skip
+      if(!this.creepInPos((x*32)+startX,(y*32)+startY) && (setup || Math.random() > 0.8)) { // randomly skip
         found=true;
       }
     }
@@ -711,13 +738,25 @@ export class Level extends Phaser.Scene {
       //creep.setFrame(60);
       //creep.resizeAndSetOrgTarget();
       creep.setOrigin(0.5);
+      creep.setImmovable(true);
+      creep.setAlpha(0);
+      var tween = this.tweens.add({
+        targets: creep,
+        props: {
+            alpha: 1
+        },
+        duration: 1000,
+        yoyo: false,
+        repeat: 0
+      });
+
       //player.setVelocity(-60,-60);
      // let angle = this.randomGen.angle();
       //let speed = 5;
       //player.setVelocityX(speed * Math.cos(angle));
       //player.setVelocityY(speed * Math.sin(angle));
 
-      //this.groups.creep.add(creep, true);
+      this.groups.creep.add(creep, true);
     }
   }
 
@@ -785,7 +824,7 @@ export class Level extends Phaser.Scene {
         //tilePositionOfPixels(sprite.x, sprite.y);
         //
 
-        console.log("found " + sprite.x-(sprite.width/2) + "/" + sprite.y-(sprite.height/2) + " to "
+        console.log("found " + parseInt(sprite.x-(sprite.width/2)) + "/" + parseInt(sprite.y-(sprite.height/2)) + " to "
           + sprite.x+(sprite.width/2) + "/" + sprite.y+(sprite.height/2));
       if (spriteTileX-(sprite.width/2) <= tileX && spriteTileX+(sprite.width/2) >= tileX && 
          spriteTileY-(sprite.height/2) <= tileY && spriteTileY+(sprite.height/2) >= tileY) { 
@@ -856,6 +895,7 @@ export class Level extends Phaser.Scene {
     this.addSpriteAndCreateBody(sprite, this.groups.friendlies);
     sprite.setInteractive().on(
       'pointerdown', event => this.onUnitSelect(event, sprite));
+    sprite.setCollideWorldBounds(true);
     return sprite;
   }
 
