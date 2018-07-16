@@ -16,9 +16,9 @@ make different buildings: one for walls and one for towers
 remove river so you can build a proper defense?
 razing buildings: remove the feature the building hosted
 (easy)make creep actual creep objects, just different (starting) frame. grass under in tiled
+(easy)introscreen; story, instructions, pause game until your press OK
 
 todo:
-
 
 medium:
 *cant build on river
@@ -34,9 +34,6 @@ hard:
  animations for attack, movement, creep
 
 *make towers attack. use different sprites to get right "light"
-
-easy:
-*introscreen; story, instructions, pause game until your press OK
 
 easy:
 *update death screen, calc score

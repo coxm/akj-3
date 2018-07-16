@@ -2,6 +2,9 @@ import {GameObjects} from 'phaser';
 
 import {distance} from '../util';
 
+import {
+  gameHeight, gameWidth,
+} from '../settings';
 
 export const modeNone = 0;
 export const modeMoving = 1;
@@ -54,12 +57,10 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
           }
           break;
         case "Twig":
-        console.log("yisss");
           this.level.score.invaders++;
           level.spawnWood(this.x,this.y,properties.woodOnDeath);
           break;
         case "Flower":
-        console.log("yiss");
           this.level.score.bosses++;
           level.spawnWood(this.x,this.y,properties.woodOnDeath);
           break;
@@ -200,6 +201,18 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     }
     if (this.health<1) {
       this.kill();
+    }
+    if (this.y<(16+(this.height/2)) && this.body.velocityY<0) { // and velo is up
+        this.stop(); //TODOD 
+    }
+    if (this.y>(gameHeight-16-(this.height/2))) {
+
+    }
+    if (this.x<(256+16+(this.width/2))) {
+
+    }
+    if (this.x>(gameWidth-17-(this.width/2))) {
+      
     }
   }
 

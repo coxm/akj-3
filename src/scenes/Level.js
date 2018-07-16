@@ -94,27 +94,9 @@ export class Level extends Phaser.Scene {
     this.woodRemaining = initialWood;
     this.createTilemap();
     this.createActors();
-    for(let i=0; i<289; i++) { 
-      this.spawnCreep(true);
-    }
-//    for (let actor of this.groups.creep.children.entries) {
-    let toBeDestroyed = [];
-    this.groups.creep.children.iterate(function (actor) {
-      
-      if(actor.frame.name===60) {
-       toBeDestroyed.push(actor);
-      }
-    });
-    let i = toBeDestroyed.length - 1;
-    while(i > -1) {
-        let getitem = toBeDestroyed[i];
-        getitem.destroy();
-        i--;
-    }
-    
-    //this.groups.creep.filter(function(actor) { return actor.frame.name===60; }).callAll('destroy');
     this.createInput();
     this.createUI();
+    this.introScreen();
 
     this.hasBarrack = true;
     this.hasFarm = true;
@@ -122,7 +104,6 @@ export class Level extends Phaser.Scene {
     this.hasWallHouse = true;
 
     this.randomGen = new Phaser.Math.RandomDataGenerator(2);
-    this.gameStarted = true;
 
   }
 
@@ -224,8 +205,27 @@ export class Level extends Phaser.Scene {
        }
       //sprite.body.immovable = true;
       this.groups.buildings.add(sprite, true);
+
+
     
     }
+        // re-use spawning algo to populate the starting creep
+      for(let i=0; i<289; i++) { 
+        this.spawnCreep(true);
+      }
+      let toBeDestroyed = [];
+      this.groups.creep.children.iterate(function (actor) {
+        if(actor.frame.name===60) {
+         toBeDestroyed.push(actor);
+        }
+      });
+      let i = toBeDestroyed.length - 1;
+      while(i > -1) {
+          let getitem = toBeDestroyed[i];
+          getitem.destroy();
+          i--;
+      }
+
     //this.barracks = this.physics.add.sprite(0,0,"tileset");
      //this.physics.add.collider(this.groups.actors, this.buildings);
      this.physics.add.collider(this.groups.invaders, this.groups.friendlies, this.attackFriendly, null, this);
@@ -455,8 +455,8 @@ export class Level extends Phaser.Scene {
     }
     const [atileX, atileY] = tilePositionOfPixels(
       Math.floor(this.input.mousePointer.x/32)*32, Math.floor(this.input.mousePointer.y/32)*32);
-    const tileX = Math.floor(this.input.mousePointer.x/32)*32;
-    const tileY = Math.floor(this.input.mousePointer.y/32)*32;
+    const tileX = Math.floor(this.input.mousePointer.x/32)*32 + 16;
+    const tileY = Math.floor(this.input.mousePointer.y/32)*32 + 15;
 
     if (this.getObjectInTile(tileX, tileY)!=null) {
       __DEV__ && console.log('Something already occupies that tile!');
@@ -488,7 +488,8 @@ export class Level extends Phaser.Scene {
     const sprite = new Building(this, tileX, tileY, properties);
     if(this.placingObject.id === "tower") {
     //  sprite.setOrigin(1,1);
-    sprite.y-=16;
+    sprite.y-=25;
+    sprite.x-=17;
     sprite.setFrame(0);
       //sprite.setSize(64,32);
     }
@@ -520,6 +521,9 @@ export class Level extends Phaser.Scene {
   }
 
   update(time, delta) {
+    if (!this.gameStarted) {
+      return;
+    }
     this.step++;
     // Update the 'place object' sprite to the current mouse position.
     if (this.placingObject) {
@@ -947,6 +951,57 @@ export class Level extends Phaser.Scene {
    //   this.setWood(this.woodRemaining);
   }
 
+  introScreen() {
+    if (this.gameStarted) { 
+      return;
+    }
+    let introGraphics = this.add.graphics();
+    introGraphics.fillRect(0, 0, gameWidth, gameHeight);
+    introGraphics.setAlpha(1);
+    introGraphics.setDepth(100);
+    var introTween = this.tweens.add({
+        targets: introGraphics,
+        props: {
+            alpha: 0
+        },
+        duration: 1000,
+        yoyo: false,
+        repeat: 0
+    });
+    let introScreen = this.add.graphics();
+    introScreen.fillStyle(0x999999, 1);
+    introScreen.fillRect(300, 170, gameWidth-600, gameHeight-300);
+    introScreen.setDepth(102);
+    let introHeadline = this.add.text(550, 180, 'The Growth', { fontSize: '32px', fill: '#000' });
+    introHeadline.setDepth(103);
+    let introText = this.add.text(360, 230, 
+      'You are the mayor of a village located\n' + 
+      'in the middle of a forest, and recently\n' +
+      'you have noticed eerie creeper plants\n' +
+      'gradually getting closer and closer. \n\n' +
+      'One day, a bunch of invading monsters\n' +
+      'attacked the village, kicking your\n' +
+      'houses and punching your villagers.\n\n' +
+      'You decide that enough is enough and \n' +
+      'start recruiting farmers to uproot the \n' +
+      'creeper plants and soldiers to defend\n' +
+      'against the invaders.\n\nHow long can you fight The Growth?'
+      , { fontSize: '24px', fill: '#111' });
+    introText.setDepth(103);
+    this.input.on(
+      'pointerdown', function(gfx) { 
+        console.log("start "); 
+        this.gameStarted = true;  
+        introScreen.setVisible(false);
+        introText.setVisible(false);
+        introHeadline.setVisible(false);
+        introGraphics.setVisible(false);
+        this.input.removeAllListeners("pointerdown");
+      }, this);
+
+//    introGraphics.on('click') ...
+  }
+
   endGame() { 
     if (this.gameover) { 
       return;
@@ -967,7 +1022,7 @@ export class Level extends Phaser.Scene {
     });
     let gameoverScreen = this.add.graphics();
     gameoverScreen.fillStyle(0x999999, 1);
-    gameoverScreen.fillRect(300, 150, gameWidth-600, gameHeight-300);
+    gameoverScreen.fillRect(300, 170, gameWidth-600, gameHeight-300);
     gameoverScreen.setDepth(102);
     let gameoverText = this.add.text(550, 180, 'Game over', { fontSize: '32px', fill: '#000' });
     gameoverText.setDepth(103);

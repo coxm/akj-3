@@ -1,5 +1,7 @@
 import {Scene, Timer} from 'phaser';
-
+import {
+  gameHeight, gameWidth,
+} from '../settings';
 
 export class Title extends Scene {
   create() {
@@ -27,10 +29,32 @@ export class Title extends Scene {
         yoyo: true,
         repeat: -1
     });
+    this.clicked=false;
 
     this.input.on('pointerdown', function() {
+      if (!this.clicked) {
+        this.clicked=true;
+        let graphics = this.add.graphics();
+        graphics.fillRect(0, 0, gameWidth, gameHeight);
+        graphics.setAlpha(0);
+        graphics.setDepth(100);
+        var tween = this.tweens.add({
+            targets: graphics,
+            props: {
+                alpha: 1
+            },
+            duration: 300,
+            yoyo: false,
+            repeat: 0
+        });
+        // TODO tween change volume?
+        
+        let timedEvent = this.time.addEvent({ delay: 300, callback: this.startGame, callbackScope: this});
+      }
+    }, this);
+  }
+  startGame() {
       this.introMusic.stop();
       this.scene.start('Level0');
-    }, this);
   }
 }
