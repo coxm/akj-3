@@ -5,8 +5,9 @@ export class Score {
     this.creeps = 0;
     this.treasures = 0;
     this.bosses = 0;
-    this.farmers = 0;
+    this.colonists = 0;
     this.soldiers = 0;
+    this.unusedWood = 0;
 
     this.scorePerInvader = 2;
     this.scorePerWood = 1;
@@ -23,7 +24,7 @@ export class Score {
   }
   getScore() {
   	return (this.invaders*this.scorePerInvader) + 
-  		(this.wood*this.scorePerWood) + 
+  		(this.unusedWood*this.scorePerWood) + 
   		(this.creeps*this.scorePerCreep) + 
   		(this.treasures*this.scorePerTreasure) + 
   		(this.bosses*this.scorePerBoss);

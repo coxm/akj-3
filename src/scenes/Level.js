@@ -900,6 +900,12 @@ export class Level extends Phaser.Scene {
     sprite.setInteractive().on(
       'pointerdown', event => this.onUnitSelect(event, sprite));
     sprite.setCollideWorldBounds(true);
+    if (spawnName=='SoldierSpawn') {
+      this.score.soldiers++;
+    }
+    else if (spawnName=='ColonistSpawn') {
+      this.score.colonists++;
+    }
     return sprite;
   }
 
@@ -1006,6 +1012,8 @@ export class Level extends Phaser.Scene {
     if (this.gameover) { 
       return;
     }
+        
+    this.score.unusedWood = this.woodRemaining;
     this.gameover = true;
     let graphics = this.add.graphics();
     graphics.fillRect(0, 0, gameWidth, gameHeight);
@@ -1029,7 +1037,7 @@ export class Level extends Phaser.Scene {
     let summaryText = this.add.text(360, 230, 'The village has fallen to the Growth!\n\nYour score was: ' 
       + this.score.getScore() + "\n\nYou killed:\n * " + this.score.invaders + " twig monsters\n * " + this.score.bosses 
       + " flower monsters\n * " + this.score.creeps + " growth creeps\n\nYou also harvested " + this.score.wood
-      + " pieces of wood,\nand you recruited:\n * " + this.score.farmers + " farmers\n * " + this.score.soldiers + " soldiers", 
+      + " pieces of wood,\nand you recruited:\n * " + this.score.colonists + " farmers\n * " + this.score.soldiers + " soldiers", 
       { fontSize: '24px', fill: '#111' });
     summaryText.setDepth(103);
   }  
