@@ -4,6 +4,7 @@ import {
   tilesetName, twigProperties, flowerProperties, colonistProperties,
   soldierProperties,
 } from '../settings';
+
 import level0Tilemap from '../tilemaps/Level0.json';
 
 
@@ -76,6 +77,14 @@ export class Boot extends Scene {
     this.load.audio("intro-theme", ["/assets/sfx/intro-theme.ogg"]);
     this.load.audio("main-theme", ["/assets/sfx/main-theme.ogg"]);
     this.load.audio("main-theme-dramatic", ["/assets/sfx/main-theme-dramatic.ogg"]);
+
+    this.anims.create({
+      key: 'flower_attack_right',
+      frames: this.anims.generateFrameNumbers('flower-monster', { start: 60, end: 79 }),
+      frameRate: 10,
+      repeat: -1
+    });
+
 
     this.load.on('complete', () => {
       console.log('Loaded');

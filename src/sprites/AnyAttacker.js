@@ -44,6 +44,9 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;
     this.healthBar.setDepth(9);
+    if (this.constructor.name=="Creep") {
+//huh
+    }
     this.on('destroy', () => { 
       this.healthBar.destroy();
       console.log("something died:" + this.constructor.name);
@@ -76,6 +79,9 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
   resizeAndSetOrgTarget() {
     this.orgTarget = this.target;
     this.setSize(this.properties.width, this.properties.height);
+    if (this.constructor.name=="Flower") {
+      this.setOffset(20,24);
+    }
   }
 
   /**
@@ -139,6 +145,10 @@ export class AnyAttacker extends Phaser.Physics.Arcade.Sprite {
     }
 
     // TODO: play an animation.
+    if(this.constructor.name==="Flower") {//} and solider /// attack=1 because soliders hate weeding
+        this.play('flower_attack_right');
+    }
+
     const dist = distance(this.x, this.y, this.target.x, this.target.y);
     if (this.level.step%50==0) { //|| dist < this.attackRadius) {
       if(this.target.constructor.name==="Creep") {//} and solider /// attack=1 because soliders hate weeding

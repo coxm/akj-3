@@ -38,6 +38,8 @@ export class Building extends Phaser.Physics.Arcade.Sprite { // TODO what?
 //    this.healthBar.fillStyle(0x999999, 1);
 //  this.healthBar.fillRect(300, 150, 100, 100);
     this.healthBar.lastHealth = this.health;
+    this.healthBar.setDepth(9);
+
     this.on('destroy', () => { this.healthBar.destroy(); });
     this.updateHealthBar(true);
         this.once = true;
@@ -59,38 +61,7 @@ export class Building extends Phaser.Physics.Arcade.Sprite { // TODO what?
    * existing target if none given.
    */
   approachTarget(target) {
-    if (target) {
-      this.target = target;
-    }
-    this.body.setVelocity(0,0);
-
-    const signX = Math.sign(this.target.x - this.x);
-    const signY = Math.sign(this.target.y - this.y);
-
-//    let collision = this.level.physics.world.collide(
-  //        this,
-    //      this.level.groups.actors);
-//    console.log(this.body.wasTouching.down || this.body.touching.down);
-console.log(signX + " / " + signY + " : " + this.body.touching.left);
-    if (!(this.body.wasTouching.down || this.body.touching.down) && signY>0) {
-      this.body.velocity.y = this.speed * signY;
-    }
-    if (!(this.body.wasTouching.up || this.body.touching.up) && signY<0) {
-      this.body.velocity.y = this.speed * signY;
-    }
-    if (!(this.body.wasTouching.left || this.body.touching.left) && signX<0) {
-      this.body.velocity.x = this.speed * signX;
-    }
-    if (!(this.body.wasTouching.left || this.body.touching.right) && signX>0) {
-      this.body.velocity.x = this.speed * signX;
-    }
-    if (false) {
-    this.body.setVelocity(
-      Math.floor(this.speed * signX),
-      Math.floor(this.speed * signY));
-  }
-    this.mode = modeMoving;
-    this.once = false;
+    
   }
 
   stop() {
@@ -119,6 +90,8 @@ console.log(signX + " / " + signY + " : " + this.body.touching.left);
     }
   }
 
+
+// TODO : do we need this?
   /**
    * Attack a building
    */
@@ -149,7 +122,7 @@ console.log(signX + " / " + signY + " : " + this.body.touching.left);
       }
     }
     if (this.health<1) {
-      this.destroy();
+      this.kill();
     }
   }
 
@@ -163,10 +136,8 @@ console.log(signX + " / " + signY + " : " + this.body.touching.left);
     const ratio = this.health / this.maxHealth;
     const colour = healthBarColour(ratio);
     this.healthBar.fillStyle(0x000000, 1);
-    this.healthBar.fillRect(
-      -1, -1, this.width+2, 7);
+    this.healthBar.fillRect(-1, -1, this.width+2, 7);
     this.healthBar.fillStyle(0x008800, 1);
-    this.healthBar.fillRect(
-      0, 0, Math.floor(this.width * ratio), 5);
+    this.healthBar.fillRect(0, 0, Math.floor(this.width * ratio), 5);
   }
 }

@@ -64,8 +64,8 @@ export const flowerProperties = {
   tileset: 'flower-monster',
   frame: 0,
   isFriendly: false,
-  height: 60,
-  width: 40,
+  height: 40,
+  width: 26,
   woodOnDeath: 100.
 };
 export const soldierProperties = {
@@ -170,6 +170,11 @@ export const woodRequiredForStructure = {
   wall: 10,
 };
 
+export const woodRequiredForUpgrade = {
+  upgrade_tower: 500,
+  upgrade_wall: 200,
+};
+
 // obsolete:
 /*
 export const woodGainedFromKilling = {
@@ -180,4 +185,4 @@ export const woodGainedFromKilling = {
 */
 
 /** The initial wood in the player's stockpile. */
-export const initialWood = 100;
+export const initialWood = 600;

@@ -1,9 +1,11 @@
 import {Physics, Scene} from 'phaser';
 
+import makeAnimations from '../animations';
+
 import {
   tilesetName, ditchFrame, towerFrame, wallFrame, tileWidth, tileHeight,
   structureAssembleRate, gameHeight, gameWidth, woodRequiredForUnit,
-  woodRequiredForStructure, initialWood,
+  woodRequiredForStructure, woodRequiredForUpgrade, initialWood,
 } from '../settings';
 import {randElement, requireNamedValue, tilePositionOfPixels} from '../util';
 import {
@@ -75,6 +77,7 @@ export class Level extends Phaser.Scene {
   }
 
   create() {
+    makeAnimations(this);
     this.state = 1; // state is the current "wave"/event
     this.step = 1; // step is just a counter incremented by update. states are triggered by step numbers
     this.gameover = false;
@@ -189,18 +192,18 @@ export class Level extends Phaser.Scene {
           sprite.on('destroy', function() { this.hasWallHouse=false; }, this);        
           break;
         case "TownHall":
-        sprite.body.setOffset(0,32);
-        sprite.body.setSize(190,128,false);
-        this.townhall=sprite;
-        this.townhall.on('destroy', this.endGame, this);
-        let townHallTop1 = this.add.sprite(b.x + this.mapOffsetX + 2 * tileWidth,
-        b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
-        townHallTop1.setFrame(110);
-        townHallTop1.setDepth(98);
-        let townHallTop2 = this.add.sprite(b.x + 32 + this.mapOffsetX + 2 * tileWidth,
-        b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
-        townHallTop2.setFrame(111);
-        townHallTop2.setDepth(98);
+          sprite.body.setOffset(0,32);
+          sprite.body.setSize(190,128,false);
+          this.townhall=sprite;
+          this.townhall.on('destroy', this.endGame, this);
+          let townHallTop1 = this.add.sprite(b.x + this.mapOffsetX + 2 * tileWidth,
+          b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
+          townHallTop1.setFrame(110);
+          townHallTop1.setDepth(98);
+          let townHallTop2 = this.add.sprite(b.x + 32 + this.mapOffsetX + 2 * tileWidth,
+          b.y + this.mapOffsetY - 2 * tileHeight-64, 'tileset');
+          townHallTop2.setFrame(111);
+          townHallTop2.setDepth(98);
         
        }
       //sprite.body.immovable = true;
@@ -253,7 +256,7 @@ export class Level extends Phaser.Scene {
     this.input.mouse.disableContextMenu();
 
     let ui_img = this.add.image(128, 768, 'ui-img');
-    ui_img.setDepth(11);
+    ui_img.setDepth(11); // TODO - change, and change the buttons etc
 //    ui_img.displayHeight = 768;
 
     this.buttons = {
@@ -286,6 +289,17 @@ export class Level extends Phaser.Scene {
         this.enterPlacementMode(structureId);
       }, this);
     }    
+
+    this.hasUpgrade = {};
+
+    for (const upgradeId of ['upgrade_wall', 'upgrade_tower']) {
+      const button = this.buttons[upgradeId];
+      this.hasUpgrade[upgradeId] = false;
+      button.setDepth(12);
+      button.on('pointerdown', function() {
+        this.attemptUpgrade(upgradeId);
+      }, this);
+    }     
     this.buttons.soldier.on('pointerdown', () => { 
       this.cancelAllModes();
       this.spawnSoldier(); 
@@ -325,6 +339,17 @@ export class Level extends Phaser.Scene {
     farmer_cost_img.setDepth(12);
     let farmer_cost_label = this.add.text(198, 290, '' + woodRequiredForUnit["Colonist"], { fontSize: '24px', fill: '#111' });
     farmer_cost_label.setDepth(12);
+
+    let wall_upgrade_cost_img = this.add.image(40, 494, 'tileset');
+    wall_upgrade_cost_img.setFrame(69);
+    wall_upgrade_cost_img.setDepth(12);
+    let wall_upgrade_cost_label = this.add.text(60, 482, '' + woodRequiredForUpgrade["upgrade_wall"], { fontSize: '24px', fill: '#111' });
+    wall_upgrade_cost_label.setDepth(12);
+    let tower_upgrade_cost_img = this.add.image(168, 494, 'tileset');
+    tower_upgrade_cost_img.setFrame(69);
+    tower_upgrade_cost_img.setDepth(12);
+    let tower_upgrade_cost_label = this.add.text(188, 482, '' + woodRequiredForUpgrade["upgrade_tower"], { fontSize: '24px', fill: '#111' });
+    tower_upgrade_cost_label.setDepth(12);
 
     this.towerPlacementPointer = this.add.sprite(-128, -108, 'tower');
     placementModeInfo.tower.sprite = this.towerPlacementPointer;
@@ -404,6 +429,42 @@ export class Level extends Phaser.Scene {
       this.orderingUnit = null;
       this.input.off('pointerdown', this.onUnitOrderClick, this);
     }
+  }
+
+  attemptUpgrade(id) {
+    this.cancelAllModes();
+
+    const woodRequired = woodRequiredForUpgrade[id];
+    if(this.hasUpgrade[id]) {
+      // TODO: add text object explaining.
+      console.log("You have already researched this upgrade!");
+      return false;
+    }
+    if(id=="upgrade_wall" && !this.hasWallHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't research wall upgrade without a wall workshop!");
+      return false;
+    }
+    if(id=="upgrade_tower" && !this.hasTowerHouse) {
+      // TODO: add text object explaining.
+      console.log("Can't research tower upgrade without a tower workshop!");
+      return false;
+    }
+    if (this.wood < woodRequired) {
+      // TODO: add text object explaining.
+      console.log('Insufficient wood for', id);
+      return false;
+    }
+    this.wood -= woodRequired;
+    this.hasUpgrade[id]=true;
+    switch(id) {
+      case "upgrade_wall":
+        this.buttons[id].setFrame(43);
+        this.buttons
+    }
+    this.buttons[id].setFrame(43);
+    this.buttons[id].removeAllListeners("pointerdown");
+    this.buttons[id].removeAllListeners("pointerup");
   }
 
   enterPlacementMode(id) {
