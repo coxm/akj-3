@@ -1,5 +1,5 @@
 {
-  "name": "es6-phaser3-basecode",
+  "name": "akj-3",
   "version": "0.0.0",
   "description": "Game jam basecode using Phaser3, ES6 (Babel) and Webpack",
   "main": "build/dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/coxm/es6-phaser3-basecode.git"
+    "url": "git+ssh://git@github.com/coxm/akj-3.git"
   },
   "author": [
     "coxm",
@@ -18,9 +18,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/coxm/es6-phaser3-basecode/issues"
+    "url": "https://github.com/coxm/akj-3/issues"
   },
-  "homepage": "https://github.com/coxm/es6-phaser3-basecode#readme",
+  "homepage": "https://github.com/coxm/akj-3#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
